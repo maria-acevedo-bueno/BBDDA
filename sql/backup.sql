@@ -33,15 +33,8 @@ USE ride_hailing;
    --set-gtid-purged=OFF \
    > backup_full_$(date +%Y%m%d).sql
 */
--- Además:
--- Si el usuario backup_user no tuviera permisos suficientes para exportar todas las bases de datos del servidor, el backup completo debería ejecutarse con una cuenta administrativa. 
--- Para la práctica, el backup principal es el del esquema ride_hailing.
 
--- 4. BACKUP DE TABLAS CONCRETAS:
--- Útil para exportar solo las tablas principales de la práctica.
--- Incluye conductor_vehiculo, porque es la tabla que relaciona conductores y vehículos y forma parte del modelo funcional.
--- Incluye audit_operacion, porque forma parte de la auditoría básica.
--- También se debe ejecutar en terminal.
+-- BACKUP DE TABLAS CONCRETAS
 
 /* 
    docker exec mysql8 mysqldump \
@@ -63,10 +56,9 @@ USE ride_hailing;
    > backup_tablas_ride_hailing_$(date +%Y%m%d).sql
 */
 
--- 5. RESTAURAR UN BACKUP:
--- Ejecutar en terminal.
--- Para restaurar un dump que contiene CREATE DATABASE / USE / CREATE TABLE, en esta práctica es más coherente usar root, 
--- ya que admin_user tiene privilegios sobre ride_hailing.* pero no privilegios globales de creación.
+-- RESTAURAR UN BACKUP:
+
+-- Para restaurar un backup, se recomienda usar un usuario root.
 
 -- Opción con cat:
 -- cat backup_ride_hailing.sql | docker exec -i mysql8 mysql -uroot -prootpass
@@ -74,16 +66,16 @@ USE ride_hailing;
 -- Opción con redirección:
 -- docker exec -i mysql8 mysql -uroot -prootpass < backup_ride_hailing.sql
 
--- 6. COMPROBACIONES DESPUÉS DEL RESTORE:
+-- COMPROBACIONES DESPUÉS DEL RESTORE:
 
--- Se debe comprobar que la base existe:
+-- Se comprueba si la base de datos existe
 SHOW DATABASES;
 USE ride_hailing;
 
--- Se comprueban las tablas:
+-- Se comprueban las tablas
 SHOW TABLES;
 
--- Conteos básicos:
+-- Conteo de datos dentro de las diferentes tablas
 SELECT 'company' AS tabla, COUNT(*) AS filas FROM company
 UNION ALL
 SELECT 'usuario', COUNT(*) FROM usuario
@@ -108,7 +100,7 @@ SELECT 'viaje_estado_log', COUNT(*) FROM viaje_estado_log
 UNION ALL
 SELECT 'audit_operacion', COUNT(*) FROM audit_operacion;
 
--- Se comprueban claves foráneas declaradas.
+-- Comprobación de claves foráneas
 SELECT
     TABLE_NAME,
     CONSTRAINT_NAME,
@@ -117,10 +109,10 @@ FROM information_schema.KEY_COLUMN_USAGE
 WHERE TABLE_SCHEMA = 'ride_hailing'
   AND REFERENCED_TABLE_NAME IS NOT NULL;
 
--- Se comprueban procedimientos almacenados.
+-- Comprobación de procedimientos almacenados.
 SHOW PROCEDURE STATUS WHERE Db = 'ride_hailing';
 
--- Se comprueban triggers y vistas:
+-- Comprobación de triggers y vistas:
 SHOW TRIGGERS FROM ride_hailing;
 SELECT
     TABLE_NAME,
@@ -128,50 +120,53 @@ SELECT
 FROM information_schema.VIEWS
 WHERE TABLE_SCHEMA = 'ride_hailing';
 
--- 7. SE COMBRUEBA SI SE PUEDE HACER PITR:
--- PITR = restaurar un backup y aplicar binlogs hasta un momento concreto.
--- Para que PITR sea viable, log_bin debe estar ON y binlog_format debería ser ROW.
+-- SE COMBRUEBA SI SE PUEDE HACER PITR
+-- Para que PITR sea viable, log_bin debe estar ON y binlog_format debería ser ROW (custom.cnf está configurado para ello).
 SHOW VARIABLES LIKE 'log_bin';
 SHOW VARIABLES LIKE 'binlog_format';
 SHOW VARIABLES LIKE 'binlog_expire_logs_seconds';
 SHOW BINARY LOGS;
 
--- 8. EJEMPLO DE PITR:
--- Caso: se quiere recuperar hasta antes de un DELETE accidental.
--- Ajustar fechas y nombre de binlog al caso real.
--- Se ejecuta en terminal.
+-- EJEMPLO DE PITR:
+-- Se quiere recuperar hasta antes de un DELETE accidental.
 
--- 1) Restaurar el backup completo:
+-- 1. Restaurar el backup completo
 -- cat backup_ride_hailing_10_00.sql | docker exec -i mysql8 mysql -uroot -prootpass
 
--- 2) Extraer cambios hasta antes del error.
--- El nombre del archivo coincide con log_bin=mysql-bin del custom.cnf:
+-- 2. Extraer cambios hasta antes del error
+
 /* 
    docker exec mysql8 mysqlbinlog \
    --start-datetime="2026-04-25 10:00:00" \
    --stop-datetime="2026-04-25 10:29:59" \
    /var/lib/mysql/mysql-bin.000001 > cambios.sql
 */
--- 3) Aplicar cambios:
+
+-- 3. Aplicar cambios
 -- cat cambios.sql | docker exec -i mysql8 mysql -uroot -prootpas
 
--- 9. BUSCAR UNA OPERACIÓN EN EL BINLOG:
--- Ejemplo para localizar un DELETE.
--- Ejecutar en terminal.
+-- BUSCAR UNA OPERACIÓN EN EL BINLOG:
+
+-- Localizar un DELETE:
+
 /*
    docker exec mysql8 mysqlbinlog \
    --start-datetime="2026-04-25 10:25:00" \
    --stop-datetime="2026-04-25 10:35:00" \
    /var/lib/mysql/mysql-bin.000001 | grep -A5 -B5 "DELETE"
 */
+
 -- También se puede recuperar por posiciones:
+
 /*
    docker exec mysql8 mysqlbinlog \
    --start-position=154 \
    --stop-position=12345 \
    /var/lib/mysql/mysql-bin.000001 > cambios.sql
 */
--- 10. SNAPSHOT CONSISTENTE:
+
+-- SNAPSHOT CONSISTENTE:
+
 -- Los snapshots pueden ser inconsistentes si MySQL está escribiendo.
 -- Para coordinarlo, se puede bloquear brevemente la lectura de tablas.
 -- En esta práctica el método principal es mysqldump, pero se documenta
@@ -185,9 +180,10 @@ SHOW BINARY LOGS;
 -- Liberar después:
 -- UNLOCK TABLES;
 
--- 11. SCRIPT DE BACKUP CON ROTACIÓN:
+-- SCRIPT DE BACKUP CON ROTACIÓN:
+
 -- Guardar como backup_mysql.sh.
--- Se ejecuta desde el sistema, no desde MySQL.
+
 /*
    #!/bin/bash
    FECHA=$(date +%Y%m%d_%H%M%S)
@@ -216,5 +212,6 @@ SHOW BINARY LOGS;
 */
 
 -- Programar backup diario a las 3:00:
+
 -- crontab -e
 -- 0 3 * * * /scripts/backup_mysql.sh >> /var/log/mysql_backup.log 2>&1
