@@ -300,7 +300,6 @@ SELECT
 FROM viaje
 WHERE id_viaje = @id_viaje_prueba;
 
--- Tabla oferta:
 -- En la tabla oferta, la oferta del conductor debe estar aceptada.
 -- El resto de ofertas del viaje deben estar expiradas.
 
