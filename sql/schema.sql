@@ -285,7 +285,8 @@ CREATE TABLE IF NOT EXISTS viaje_estado_log (
 ) ENGINE = InnoDB;
 
 -- La tabla audit_operacion se usa como log de operaciones críticas.
--- En esta, se registran inserciones de viajes, actualizaciones de viajes, actualizaciones de ofertas e inserciones de pagos mediante triggers.
+-- En esta tabla se registran inserciones de viajes, actualizaciones de viajes,
+-- actualizaciones de ofertas e inserciones de pagos mediante triggers.
 CREATE TABLE IF NOT EXISTS audit_operacion (
     id_audit BIGINT NOT NULL AUTO_INCREMENT,
     tabla_afectada VARCHAR(50) NOT NULL,
