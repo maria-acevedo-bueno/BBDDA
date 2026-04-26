@@ -1,7 +1,6 @@
 USE ride_hailing;
 
--- Se cargan los datos iniciales
--- 1. COMPANIES
+-- INSERCIÓN DE DATOS EN COMPANY
 
 INSERT INTO company (
     nombre,
@@ -14,8 +13,7 @@ INSERT INTO company (
     ('Lyft', 'D45678901', TRUE),
     ('Free Now', 'E56789012', TRUE);
 
--- 2. USUARIOS
--- Primero se insertan riders y después conductores para controlar mejor los ids.
+-- INSERCIÓN DE DATOS EN USUARIO
 
 INSERT INTO usuario (
     nombre,
@@ -25,44 +23,77 @@ INSERT INTO usuario (
     telefono,
     activo
 ) VALUES
-    ('Ana', 'Lopez', 'Martin', 'ana.lopez@ridehailing.test', '600000001', TRUE),         -- 1
-    ('Luis', 'Garcia', 'Santos', 'luis.garcia@ridehailing.test', '600000002', TRUE),      -- 2
-    ('Marta', 'Perez', 'Ruiz', 'marta.perez@ridehailing.test', '600000003', TRUE),        -- 3
-    ('Diego', 'Navarro', 'Gil', 'diego.navarro@ridehailing.test', '600000004', TRUE),     -- 4
-    ('Sara', 'Ortega', 'Mora', 'sara.ortega@ridehailing.test', '600000005', TRUE),        -- 5
-    ('Pedro', 'Arias', 'Luna', 'pedro.arias@ridehailing.test', '600000006', TRUE),      -- 6
-    ('Lucia', 'Ramos', 'Iglesias', 'lucia.ramos@ridehailing.test', '600000007', TRUE),    -- 7
-    ('Jorge', 'Mendez', 'Prieto', 'jorge.mendez@ridehailing.test', '600000008', TRUE),    -- 8
-    ('Paula', 'Herrera', 'Sanz', 'paula.herrera@ridehailing.test', '600000009', TRUE),    -- 9
-    ('Raul', 'Castillo', 'Fuentes', 'raul.castillo@ridehailing.test', '600000010', TRUE), -- 10
-    ('Carlos', 'Serrano', 'Vega', 'carlos.serrano@ridehailing.test', '611000001', TRUE),  -- 11
-    ('Elena', 'Romero', 'Diaz', 'elena.romero@ridehailing.test', '611000002', TRUE),      -- 12
-    ('Javier', 'Molina', 'Rey', 'javier.molina@ridehailing.test', '611000003', TRUE),     -- 13
-    ('Laura', 'Castro', 'Nieto', 'laura.castro@ridehailing.test', '611000004', TRUE),     -- 14
-    ('Pablo', 'Suarez', 'Ramos', 'pablo.suarez@ridehailing.test', '611000005', TRUE),     -- 15
-    ('Nuria', 'Arias', 'Blanco', 'nuria.arias@ridehailing.test', '611000006', TRUE),      -- 16
-    ('Alberto', 'Soto', 'Marin', 'alberto.soto@ridehailing.test', '611000007', TRUE),     -- 17
-    ('Irene', 'Delgado', 'Vidal', 'irene.delgado@ridehailing.test', '611000008', TRUE),   -- 18
-    ('Mario', 'Benitez', 'Peña', 'mario.benitez@ridehailing.test', '611000009', TRUE),    -- 19
-    ('Clara', 'Pascual', 'Lozano', 'clara.pascual@ridehailing.test', '611000010', TRUE),  -- 20
-    ('David', 'Soler', 'Acosta', 'david.soler@ridehailing.test', '611000011', TRUE),      -- 21
-    ('Rocio', 'Campos', 'Mendez', 'rocio.campos@ridehailing.test', '611000012', TRUE),    -- 22
-    ('Adrian', 'Rivas', 'Dominguez', 'adrian.rivas@ridehailing.test', '611000013', TRUE), -- 23
-    ('Noelia', 'Vargas', 'Leal', 'noelia.vargas@ridehailing.test', '611000014', TRUE),    -- 24
-    ('Sergio', 'Pardo', 'Cano', 'sergio.pardo@ridehailing.test', '611000015', TRUE),      -- 25
-    ('Beatriz', 'Lorenzo', 'Nuñez', 'beatriz.lorenzo@ridehailing.test', '611000016', TRUE), -- 26
-    ('Ivan', 'Crespo', 'Moya', 'ivan.crespo@ridehailing.test', '611000017', TRUE),        -- 27
-    ('Alicia', 'Redondo', 'Sierra', 'alicia.redondo@ridehailing.test', '611000018', TRUE), -- 28
-    ('Hugo', 'Requena', 'Polo', 'hugo.requena@ridehailing.test', '611000019', TRUE),      -- 29
-    ('Julia', 'Pastor', 'Saez', 'julia.pastor@ridehailing.test', '611000020', TRUE);      -- 30
+    ('Ana', 'Lopez', 'Martin', 'ana.lopez@ridehailing.test', '600000001', TRUE),         
+    ('Luis', 'Garcia', 'Santos', 'luis.garcia@ridehailing.test', '600000002', TRUE),      
+    ('Marta', 'Perez', 'Ruiz', 'marta.perez@ridehailing.test', '600000003', TRUE),        
+    ('Diego', 'Navarro', 'Gil', 'diego.navarro@ridehailing.test', '600000004', TRUE),     
+    ('Sara', 'Ortega', 'Mora', 'sara.ortega@ridehailing.test', '600000005', TRUE),        
+    ('Pedro', 'Arias', 'Luna', 'pedro.arias@ridehailing.test', '600000006', TRUE),      
+    ('Lucia', 'Ramos', 'Iglesias', 'lucia.ramos@ridehailing.test', '600000007', TRUE),    
+    ('Jorge', 'Mendez', 'Prieto', 'jorge.mendez@ridehailing.test', '600000008', TRUE),    
+    ('Paula', 'Herrera', 'Sanz', 'paula.herrera@ridehailing.test', '600000009', TRUE),    
+    ('Raul', 'Castillo', 'Fuentes', 'raul.castillo@ridehailing.test', '600000010', TRUE), 
+    ('Carlos', 'Serrano', 'Vega', 'carlos.serrano@ridehailing.test', '611000001', TRUE), 
+    ('Elena', 'Romero', 'Diaz', 'elena.romero@ridehailing.test', '611000002', TRUE),      
+    ('Javier', 'Molina', 'Rey', 'javier.molina@ridehailing.test', '611000003', TRUE),     
+    ('Laura', 'Castro', 'Nieto', 'laura.castro@ridehailing.test', '611000004', TRUE),     
+    ('Pablo', 'Suarez', 'Ramos', 'pablo.suarez@ridehailing.test', '611000005', TRUE),     
+    ('Nuria', 'Arias', 'Blanco', 'nuria.arias@ridehailing.test', '611000006', TRUE),      
+    ('Alberto', 'Soto', 'Marin', 'alberto.soto@ridehailing.test', '611000007', TRUE),     
+    ('Irene', 'Delgado', 'Vidal', 'irene.delgado@ridehailing.test', '611000008', TRUE),   
+    ('Mario', 'Benitez', 'Peña', 'mario.benitez@ridehailing.test', '611000009', TRUE),    
+    ('Clara', 'Pascual', 'Lozano', 'clara.pascual@ridehailing.test', '611000010', TRUE),  
+    ('David', 'Soler', 'Acosta', 'david.soler@ridehailing.test', '611000011', TRUE),      
+    ('Rocio', 'Campos', 'Mendez', 'rocio.campos@ridehailing.test', '611000012', TRUE),    
+    ('Adrian', 'Rivas', 'Dominguez', 'adrian.rivas@ridehailing.test', '611000013', TRUE), 
+    ('Noelia', 'Vargas', 'Leal', 'noelia.vargas@ridehailing.test', '611000014', TRUE),    
+    ('Sergio', 'Pardo', 'Cano', 'sergio.pardo@ridehailing.test', '611000015', TRUE),      
+    ('Beatriz', 'Lorenzo', 'Nuñez', 'beatriz.lorenzo@ridehailing.test', '611000016', TRUE), 
+    ('Ivan', 'Crespo', 'Moya', 'ivan.crespo@ridehailing.test', '611000017', TRUE),        
+    ('Alicia', 'Redondo', 'Sierra', 'alicia.redondo@ridehailing.test', '611000018', TRUE), 
+    ('Hugo', 'Requena', 'Polo', 'hugo.requena@ridehailing.test', '611000019', TRUE),      
+    ('Julia', 'Pastor', 'Saez', 'julia.pastor@ridehailing.test', '611000020', TRUE),
+    ('Carmen', 'Vidal', 'Roca', 'carmen.vidal@ridehailing.test', '600000011', TRUE),
+    ('Marcos', 'Fuentes', 'Paz', 'marcos.fuentes@ridehailing.test', '600000012', TRUE),
+    ('Elisa', 'Sanchez', 'Cruz', 'elisa.sanchez@ridehailing.test', '600000013', TRUE),
+    ('Tomas', 'Moreno', 'Reyes', 'tomas.moreno@ridehailing.test', '600000014', TRUE),
+    ('Nerea', 'Campos', 'Soler', 'nerea.campos@ridehailing.test', '600000015', TRUE),
+    ('Victor', 'Ibañez', 'Molina', 'victor.ibanez@ridehailing.test', '600000016', TRUE),
+    ('Olga', 'Rivas', 'Pardo', 'olga.rivas@ridehailing.test', '600000017', TRUE),
+    ('Samuel', 'Nieto', 'Vera', 'samuel.nieto@ridehailing.test', '600000018', TRUE),
+    ('Eva', 'Cano', 'Marin', 'eva.cano@ridehailing.test', '600000019', TRUE),
+    ('Daniel', 'Leal', 'Soto', 'daniel.leal@ridehailing.test', '600000020', TRUE),
+    ('Isabel', 'Rey', 'Castro', 'isabel.rey@ridehailing.test', '600000021', TRUE),
+    ('Alvaro', 'Peña', 'Gil', 'alvaro.pena@ridehailing.test', '600000022', TRUE),
+    ('Teresa', 'Blanco', 'Vega', 'teresa.blanco@ridehailing.test', '600000023', TRUE),
+    ('Manuel', 'Pastor', 'Lara', 'manuel.pastor@ridehailing.test', '600000024', TRUE),
+    ('Natalia', 'Sanz', 'Mora', 'natalia.sanz@ridehailing.test', '600000025', TRUE),
+    ('Oscar', 'Herrero', 'Luna', 'oscar.herrero@ridehailing.test', '611000021', TRUE),
+    ('Silvia', 'Domingo', 'Sierra', 'silvia.domingo@ridehailing.test', '611000022', TRUE),
+    ('Ruben', 'Carrasco', 'Rey', 'ruben.carrasco@ridehailing.test', '611000023', TRUE),
+    ('Patricia', 'Vargas', 'Moya', 'patricia.vargas@ridehailing.test', '611000024', TRUE),
+    ('Guillermo', 'Cortes', 'Saez', 'guillermo.cortes@ridehailing.test', '611000025', TRUE),
+    ('Ainhoa', 'Polo', 'Ramos', 'ainhoa.polo@ridehailing.test', '611000026', TRUE),
+    ('Fernando', 'Lorenzo', 'Arias', 'fernando.lorenzo@ridehailing.test', '611000027', TRUE),
+    ('Cristina', 'Redondo', 'Prieto', 'cristina.redondo@ridehailing.test', '611000028', TRUE),
+    ('Miguel', 'Acosta', 'Lozano', 'miguel.acosta@ridehailing.test', '611000029', TRUE),
+    ('Sonia', 'Delgado', 'Campos', 'sonia.delgado@ridehailing.test', '611000030', TRUE),
+    ('Andres', 'Benitez', 'Santos', 'andres.benitez@ridehailing.test', '611000031', TRUE),
+    ('Miriam', 'Ortega', 'Fuentes', 'miriam.ortega@ridehailing.test', '611000032', TRUE),
+    ('Jose', 'Navarro', 'Crespo', 'jose.navarro@ridehailing.test', '611000033', TRUE),
+    ('Raquel', 'Mendez', 'Iglesias', 'raquel.mendez@ridehailing.test', '611000034', TRUE),
+    ('Enrique', 'Gomez', 'Pascual', 'enrique.gomez@ridehailing.test', '611000035', TRUE);
 
--- 3. RIDERS
+-- INSERCIÓN DE DATOS EN RIDER
 
 INSERT INTO rider (id_usuario) VALUES
     (1), (2), (3), (4), (5),
-    (6), (7), (8), (9), (10);
+    (6), (7), (8), (9), (10),
+    (31), (32), (33), (34), (35),
+    (36), (37), (38), (39), (40),
+    (41), (42), (43), (44), (45);
 
--- 4. CONDUCTORES
+-- INSERCIÓN DE DATOS EN CONDUCTOR
 
 INSERT INTO conductor (
     id_usuario,
@@ -89,9 +120,24 @@ INSERT INTO conductor (
     (27, 'LIC-BCN-0004', 'disponible',   2),
     (28, 'LIC-VLC-0004', 'disponible',   3),
     (29, 'LIC-BIL-0004', 'suspendido',   4),
-    (30, 'LIC-SEV-0004', 'disponible',   5);
+    (30, 'LIC-SEV-0004', 'disponible',   5),
+    (46, 'LIC-MAD-0005', 'disponible',   1),
+    (47, 'LIC-MAD-0006', 'disponible',   1),
+    (48, 'LIC-BCN-0005', 'disponible',   2),
+    (49, 'LIC-BCN-0006', 'desconectado', 2),
+    (50, 'LIC-VLC-0005', 'disponible',   3),
+    (51, 'LIC-VLC-0006', 'disponible',   3),
+    (52, 'LIC-BIL-0005', 'en_viaje',     4),
+    (53, 'LIC-BIL-0006', 'disponible',   4),
+    (54, 'LIC-SEV-0005', 'disponible',   5),
+    (55, 'LIC-SEV-0006', 'suspendido',   5),
+    (56, 'LIC-MAD-0007', 'disponible',   1),
+    (57, 'LIC-BCN-0007', 'en_viaje',     2),
+    (58, 'LIC-VLC-0007', 'desconectado', 3),
+    (59, 'LIC-BIL-0007', 'disponible',   4),
+    (60, 'LIC-SEV-0007', 'disponible',   5);
 
--- 5. VEHICULOS
+-- INSERCIÓN DE DATOS EN VEHICULO
 
 INSERT INTO vehiculo (
     id_company,
@@ -102,29 +148,43 @@ INSERT INTO vehiculo (
     capacidad,
     activo
 ) VALUES
-    (1, '1111AAA', 'Toyota',  'Corolla', 'Blanco', 4, TRUE),   -- 1
-    (1, '1112AAB', 'Seat',    'Leon',    'Negro',  4, TRUE),   -- 2
-    (1, '1113AAC', 'Skoda',   'Octavia', 'Gris',   4, TRUE),   -- 3
-    (1, '1114AAD', 'Hyundai', 'i30',     'Azul',   4, TRUE),   -- 4
-    (2, '2221BBB', 'Renault', 'Clio',    'Rojo',   4, TRUE),   -- 5
-    (2, '2222BBC', 'Peugeot', '308',     'Blanco', 4, TRUE),   -- 6
-    (2, '2223BBD', 'Citroen', 'C4',      'Negro',  4, TRUE),   -- 7
-    (2, '2224BBE', 'Kia',     'Ceed',    'Gris',   4, TRUE),   -- 8
-    (3, '3331CCC', 'Hyundai', 'i30',     'Rojo',   4, TRUE),   -- 9
-    (3, '3332CCD', 'Kia',     'Ceed',    'Blanco', 4, FALSE),  -- 10
-    (3, '3333CCE', 'Toyota',  'Yaris',   'Azul',   4, TRUE),   -- 11
-    (3, '3334CCF', 'Seat',    'Ibiza',   'Negro',  4, TRUE),   -- 12
-    (4, '4441DDD', 'Volkswagen', 'Golf', 'Gris',   4, TRUE),   -- 13
-    (4, '4442DDE', 'Ford',    'Focus',   'Blanco', 4, TRUE),   -- 14
-    (4, '4443DDF', 'Opel',    'Astra',   'Azul',   4, TRUE),   -- 15
-    (4, '4444DDG', 'Mazda',   '3',       'Rojo',   4, TRUE),   -- 16
-    (5, '5551EEE', 'Peugeot', '208',     'Negro',  4, TRUE),   -- 17
-    (5, '5552EEF', 'Renault', 'Megane',  'Gris',   4, TRUE),   -- 18
-    (5, '5553EEG', 'Toyota',  'Corolla', 'Blanco', 4, TRUE),   -- 19
-    (5, '5554EEH', 'Hyundai', 'Elantra', 'Azul',   4, TRUE);   -- 20
+    (1, '1111AAA', 'Toyota',  'Corolla', 'Blanco', 4, TRUE),
+    (1, '1112AAB', 'Seat',    'Leon',    'Negro',  4, TRUE),
+    (1, '1113AAC', 'Skoda',   'Octavia', 'Gris',   4, TRUE),
+    (1, '1114AAD', 'Hyundai', 'i30',     'Azul',   4, TRUE),
+    (2, '2221BBB', 'Renault', 'Clio',    'Rojo',   4, TRUE),
+    (2, '2222BBC', 'Peugeot', '308',     'Blanco', 4, TRUE),
+    (2, '2223BBD', 'Citroen', 'C4',      'Negro',  4, TRUE),
+    (2, '2224BBE', 'Kia',     'Ceed',    'Gris',   4, TRUE),
+    (3, '3331CCC', 'Hyundai', 'i30',     'Rojo',   4, TRUE),
+    (3, '3332CCD', 'Kia',     'Ceed',    'Blanco', 4, FALSE),
+    (3, '3333CCE', 'Toyota',  'Yaris',   'Azul',   4, TRUE),
+    (3, '3334CCF', 'Seat',    'Ibiza',   'Negro',  4, TRUE),
+    (4, '4441DDD', 'Volkswagen', 'Golf', 'Gris',   4, TRUE),
+    (4, '4442DDE', 'Ford',    'Focus',   'Blanco', 4, TRUE),
+    (4, '4443DDF', 'Opel',    'Astra',   'Azul',   4, TRUE),
+    (4, '4444DDG', 'Mazda',   '3',       'Rojo',   4, TRUE),
+    (5, '5551EEE', 'Peugeot', '208',     'Negro',  4, TRUE),
+    (5, '5552EEF', 'Renault', 'Megane',  'Gris',   4, TRUE),
+    (5, '5553EEG', 'Toyota',  'Corolla', 'Blanco', 4, TRUE),
+    (5, '5554EEH', 'Hyundai', 'Elantra', 'Azul',   4, TRUE),
+    (1, '1115AAE', 'Toyota',     'C-HR',   'Blanco', 4, TRUE),
+    (1, '1116AAF', 'Hyundai',    'Kona',   'Negro',  4, TRUE),
+    (1, '1117AAG', 'Skoda',      'Fabia',  'Gris',   4, TRUE),
+    (2, '2225BBF', 'Renault',    'Megane', 'Azul',   4, TRUE),
+    (2, '2226BBG', 'Peugeot',    '2008',   'Blanco', 4, TRUE),
+    (2, '2227BBH', 'Citroen',    'C3',     'Rojo',   4, TRUE),
+    (3, '3335CCG', 'Kia',        'Niro',   'Gris',   4, TRUE),
+    (3, '3336CCH', 'Toyota',     'Auris',  'Negro',  4, TRUE),
+    (3, '3337CCI', 'Seat',       'Arona',  'Azul',   4, FALSE),
+    (4, '4445DDH', 'Ford',       'Puma',   'Blanco', 4, TRUE),
+    (4, '4446DDI', 'Volkswagen', 'Polo',   'Gris',   4, TRUE),
+    (4, '4447DDJ', 'Mazda',      'CX-30',  'Rojo',   4, TRUE),
+    (5, '5555EEI', 'Peugeot',    '3008',   'Negro',  4, TRUE),
+    (5, '5556EEJ', 'Renault',    'Captur', 'Blanco', 4, TRUE),
+    (5, '5557EEK', 'Hyundai',    'Tucson', 'Azul',   4, TRUE);
 
--- 6. ASIGNACIONES CONDUCTOR-VEHICULO
--- fecha_hasta NULL indica asignación vigente.
+-- INSERCIÓN DE DATOS EN CONDUCTOR-VEHICULO
 
 INSERT INTO conductor_vehiculo (
     id_conductor,
@@ -136,33 +196,47 @@ INSERT INTO conductor_vehiculo (
     (12, 2,  '2026-01-01 08:00:00', NULL),
     (21, 3,  '2026-01-01 08:00:00', NULL),
     (26, 4,  '2026-01-01 08:00:00', NULL),
-
     (13, 5,  '2026-01-01 08:00:00', NULL),
     (14, 6,  '2026-01-01 08:00:00', NULL),
     (22, 7,  '2026-01-01 08:00:00', NULL),
     (27, 8,  '2026-01-01 08:00:00', NULL),
-
     (15, 9,  '2026-01-01 08:00:00', NULL),
     (16, 10, '2026-01-01 08:00:00', NULL),
     (23, 11, '2026-01-01 08:00:00', NULL),
     (28, 12, '2026-01-01 08:00:00', NULL),
-
     (17, 13, '2026-01-01 08:00:00', NULL),
     (18, 14, '2026-01-01 08:00:00', NULL),
     (24, 15, '2026-01-01 08:00:00', NULL),
     (29, 16, '2026-01-01 08:00:00', NULL),
-
     (19, 17, '2026-01-01 08:00:00', NULL),
     (20, 18, '2026-01-01 08:00:00', NULL),
     (25, 19, '2026-01-01 08:00:00', NULL),
     (30, 20, '2026-01-01 08:00:00', NULL),
-
-    -- histórico adicional:
     (15, 10, '2025-06-01 08:00:00', '2025-12-31 23:59:59'),
     (17, 14, '2025-03-01 08:00:00', '2025-07-15 20:00:00'),
-    (19, 18, '2025-02-10 08:00:00', '2025-11-01 18:00:00');
+    (19, 18, '2025-02-10 08:00:00', '2025-11-01 18:00:00'),
+    (46, 21, '2026-02-01 08:00:00', NULL),
+    (47, 22, '2026-02-01 08:00:00', NULL),
+    (56, 23, '2026-02-01 08:00:00', NULL),
+    (48, 24, '2026-02-01 08:00:00', NULL),
+    (49, 25, '2026-02-01 08:00:00', NULL),
+    (57, 26, '2026-02-01 08:00:00', NULL),
+    (50, 27, '2026-02-01 08:00:00', NULL),
+    (51, 28, '2026-02-01 08:00:00', NULL),
+    (58, 29, '2026-02-01 08:00:00', NULL),
+    (52, 30, '2026-02-01 08:00:00', NULL),
+    (53, 31, '2026-02-01 08:00:00', NULL),
+    (59, 32, '2026-02-01 08:00:00', NULL),
+    (54, 33, '2026-02-01 08:00:00', NULL),
+    (55, 34, '2026-02-01 08:00:00', NULL),
+    (60, 35, '2026-02-01 08:00:00', NULL),
+    (46, 22, '2025-08-01 08:00:00', '2026-01-31 23:59:59'),
+    (48, 25, '2025-09-01 08:00:00', '2026-01-31 23:59:59'),
+    (50, 28, '2025-07-01 08:00:00', '2026-01-31 23:59:59'),
+    (53, 30, '2025-10-01 08:00:00', '2026-01-31 23:59:59'),
+    (60, 34, '2025-11-01 08:00:00', '2026-01-31 23:59:59');
 
--- 7. VIAJES HISTORICOS
+-- INSERCIÓN DE DATOS EN VIAJE
 
 INSERT INTO viaje (
     id_rider,
@@ -197,9 +271,24 @@ INSERT INTO viaje (
     (2, 24, 15, 'finalizado', '2026-04-22 11:00:00', '2026-04-22 11:03:00', '2026-04-22 11:07:00', '2026-04-22 11:39:00', 43.260000, -2.940000, 43.275000, -2.960000, 'Casco Viejo, Bilbao', 'San Ignacio, Bilbao', 7.10, NULL, NULL),
     (3, 25, 19, 'finalizado', '2026-04-22 12:00:00', '2026-04-22 12:02:00', '2026-04-22 12:06:00', '2026-04-22 12:31:00', 37.385000, -5.990000, 37.405000, -5.960000, 'Triana, Sevilla', 'Santa Justa, Sevilla', 7.90, NULL, NULL),
     (4, NULL, NULL, 'solicitado', '2026-04-22 13:15:00', NULL, NULL, NULL, 40.400000, -3.710000, 40.420000, -3.695000, 'Principe Pio, Madrid', 'Gran Via, Madrid', 4.80, NULL, NULL),
-    (5, NULL, NULL, 'solicitado', '2026-04-22 14:00:00', NULL, NULL, NULL, 41.392000, 2.165000, 41.408000, 2.185000, 'Diagonal, Barcelona', 'Poblenou, Barcelona', 6.20, NULL, NULL);
+    (5, NULL, NULL, 'solicitado', '2026-04-22 14:00:00', NULL, NULL, NULL, 41.392000, 2.165000, 41.408000, 2.185000, 'Diagonal, Barcelona', 'Poblenou, Barcelona', 6.20, NULL, NULL),
+    (31, 46, 21, 'finalizado', '2026-04-23 08:10:00', '2026-04-23 08:11:00', '2026-04-23 08:15:00', '2026-04-23 08:38:00', 40.418000, -3.710000, 40.445000, -3.700000, 'Opera, Madrid', 'Cuzco, Madrid', 7.20, NULL, NULL),
+    (32, 47, 22, 'finalizado', '2026-04-23 09:20:00', '2026-04-23 09:22:00', '2026-04-23 09:26:00', '2026-04-23 09:58:00', 40.405000, -3.695000, 40.460000, -3.690000, 'Lavapies, Madrid', 'Plaza Castilla, Madrid', 9.40, NULL, NULL),
+    (33, NULL, NULL, 'cancelado', '2026-04-23 10:05:00', NULL, NULL, NULL, 41.390000, 2.175000, 41.420000, 2.190000, 'Sagrada Familia, Barcelona', 'Horta, Barcelona', 6.90, 'rider', 'Cambio de planes del cliente'),
+    (34, 48, 24, 'finalizado', '2026-04-23 11:30:00', '2026-04-23 11:31:00', '2026-04-23 11:35:00', '2026-04-23 12:01:00', 41.385000, 2.155000, 41.410000, 2.180000, 'Sants, Barcelona', 'Glories, Barcelona', 8.20, NULL, NULL),
+    (35, 50, 27, 'finalizado', '2026-04-23 12:45:00', '2026-04-23 12:46:00', '2026-04-23 12:50:00', '2026-04-23 13:12:00', 39.460000, -0.370000, 39.485000, -0.355000, 'Ruzafa, Valencia', 'Alameda, Valencia', 5.80, NULL, NULL),
+    (36, 51, 28, 'finalizado', '2026-04-23 15:10:00', '2026-04-23 15:12:00', '2026-04-23 15:16:00', '2026-04-23 15:49:00', 39.475000, -0.390000, 39.500000, -0.365000, 'Campanar, Valencia', 'Universitat Politecnica, Valencia', 9.10, NULL, NULL),
+    (37, 52, 30, 'en_curso', '2026-04-23 16:00:00', '2026-04-23 16:02:00', '2026-04-23 16:06:00', NULL, 43.265000, -2.930000, 43.285000, -2.950000, 'Moyua, Bilbao', 'San Mames, Bilbao', 6.30, NULL, NULL),
+    (38, NULL, NULL, 'cancelado', '2026-04-23 17:25:00', NULL, NULL, NULL, 37.390000, -5.995000, 37.420000, -5.970000, 'Macarena, Sevilla', 'Los Remedios, Sevilla', 8.40, 'sistema', 'Sin conductores disponibles'),
+    (39, 54, 33, 'finalizado', '2026-04-24 08:40:00', '2026-04-24 08:41:00', '2026-04-24 08:45:00', '2026-04-24 09:08:00', 37.382000, -5.996000, 37.405000, -5.975000, 'Alameda, Sevilla', 'Nervion, Sevilla', 6.60, NULL, NULL),
+    (40, 60, 35, 'finalizado', '2026-04-24 09:55:00', '2026-04-24 09:57:00', '2026-04-24 10:02:00', '2026-04-24 10:28:00', 37.370000, -5.990000, 37.395000, -5.960000, 'Bellavista, Sevilla', 'Santa Justa, Sevilla', 7.70, NULL, NULL),
+    (41, 56, 23, 'finalizado', '2026-04-24 11:10:00', '2026-04-24 11:11:00', '2026-04-24 11:16:00', '2026-04-24 11:41:00', 40.430000, -3.715000, 40.480000, -3.700000, 'Moncloa, Madrid', 'Fuencarral, Madrid', 8.80, NULL, NULL),
+    (42, 57, 26, 'aceptado', '2026-04-24 12:20:00', '2026-04-24 12:22:00', NULL, NULL, 41.375000, 2.150000, 41.395000, 2.170000, 'Montjuic, Barcelona', 'Plaza Catalunya, Barcelona', 5.90, NULL, NULL),
+    (43, NULL, NULL, 'solicitado', '2026-04-24 13:05:00', NULL, NULL, NULL, 39.455000, -0.385000, 39.470000, -0.360000, 'Patraix, Valencia', 'Centro, Valencia', 4.40, NULL, NULL),
+    (44, NULL, NULL, 'solicitado', '2026-04-24 14:35:00', NULL, NULL, NULL, 43.250000, -2.930000, 43.280000, -2.940000, 'Santutxu, Bilbao', 'Abando, Bilbao', 5.50, NULL, NULL),
+    (45, 59, 32, 'finalizado', '2026-04-24 18:15:00', '2026-04-24 18:17:00', '2026-04-24 18:21:00', '2026-04-24 18:52:00', 43.270000, -2.945000, 43.295000, -2.960000, 'Deusto, Bilbao', 'Getxo, Bilbao', 10.20, NULL, NULL);
 
--- 8. OFERTAS HISTORICAS
+-- INSERCIÓN DE DATOS EN OFERTA
 
 INSERT INTO oferta (
     id_viaje,
@@ -212,55 +301,77 @@ INSERT INTO oferta (
     (1, 11, '2026-04-20 09:00:20', '2026-04-20 09:00:50', 'aceptada', 9.60),
     (1, 12, '2026-04-20 09:00:20', '2026-04-20 09:01:10', 'expirada', 9.60),
     (1, 21, '2026-04-20 09:00:20', '2026-04-20 09:01:10', 'expirada', 9.60),
-
     (2, 12, '2026-04-20 10:00:15', '2026-04-20 10:01:00', 'aceptada', 12.15),
     (2, 11, '2026-04-20 10:00:15', '2026-04-20 10:01:05', 'expirada', 12.15),
     (2, 21, '2026-04-20 10:00:15', '2026-04-20 10:01:05', 'expirada', 12.15),
-
     (3, 13, '2026-04-20 11:00:20', '2026-04-20 11:02:00', 'rechazada', 7.80),
     (3, 15, '2026-04-20 11:00:20', '2026-04-20 11:03:00', 'expirada', 7.80),
-
     (4, 13, '2026-04-21 08:15:20', '2026-04-21 08:15:50', 'aceptada', 7.35),
     (4, 22, '2026-04-21 08:15:20', '2026-04-21 08:16:10', 'expirada', 7.35),
-
     (5, 15, '2026-04-21 09:30:20', '2026-04-21 09:31:00', 'aceptada', 10.50),
     (5, 23, '2026-04-21 09:30:20', '2026-04-21 09:31:20', 'expirada', 10.50),
-
     (6, 17, '2026-04-21 11:00:20', '2026-04-21 11:00:45', 'aceptada', 8.55),
     (6, 24, '2026-04-21 11:00:20', '2026-04-21 11:01:00', 'expirada', 8.55),
-
     (7, 19, '2026-04-21 12:10:20', '2026-04-21 12:11:00', 'aceptada', 10.20),
     (7, 25, '2026-04-21 12:10:20', '2026-04-21 12:11:10', 'expirada', 10.20),
-
     (8, 11, '2026-04-21 13:00:20', NULL, 'expirada', 11.10),
     (8, 12, '2026-04-21 13:00:20', NULL, 'expirada', 11.10),
-
     (9, 21, '2026-04-22 08:00:20', '2026-04-22 08:00:55', 'aceptada', 10.35),
     (9, 11, '2026-04-22 08:00:20', '2026-04-22 08:01:00', 'expirada', 10.35),
-
     (10, 22, '2026-04-22 09:00:20', '2026-04-22 09:01:30', 'aceptada', 8.40),
     (10, 13, '2026-04-22 09:00:20', '2026-04-22 09:01:35', 'expirada', 8.40),
     (10, 27, '2026-04-22 09:00:20', '2026-04-22 09:01:40', 'expirada', 8.40),
-
     (11, 23, '2026-04-22 10:00:20', '2026-04-22 10:00:50', 'aceptada', 12.45),
     (11, 15, '2026-04-22 10:00:20', '2026-04-22 10:01:00', 'expirada', 12.45),
     (11, 28, '2026-04-22 10:00:20', '2026-04-22 10:01:10', 'expirada', 12.45),
-
     (12, 24, '2026-04-22 11:00:20', '2026-04-22 11:02:00', 'aceptada', 10.65),
     (12, 17, '2026-04-22 11:00:20', '2026-04-22 11:02:10', 'expirada', 10.65),
-
     (13, 25, '2026-04-22 12:00:20', '2026-04-22 12:01:00', 'aceptada', 11.85),
     (13, 19, '2026-04-22 12:00:20', '2026-04-22 12:01:10', 'expirada', 11.85),
-
     (14, 11, '2026-04-22 13:15:20', NULL, 'pendiente', 7.20),
     (14, 12, '2026-04-22 13:15:20', NULL, 'pendiente', 7.20),
     (14, 21, '2026-04-22 13:15:20', NULL, 'pendiente', 7.20),
-
     (15, 13, '2026-04-22 14:00:20', NULL, 'pendiente', 9.30),
     (15, 22, '2026-04-22 14:00:20', NULL, 'pendiente', 9.30),
-    (15, 27, '2026-04-22 14:00:20', NULL, 'pendiente', 9.30);
+    (15, 27, '2026-04-22 14:00:20', NULL, 'pendiente', 9.30),
+    (16, 46, '2026-04-23 08:10:20', '2026-04-23 08:10:55', 'aceptada', 10.80),
+    (16, 47, '2026-04-23 08:10:20', '2026-04-23 08:11:05', 'expirada', 10.80),
+    (16, 56, '2026-04-23 08:10:20', '2026-04-23 08:11:10', 'expirada', 10.80),
+    (17, 47, '2026-04-23 09:20:20', '2026-04-23 09:21:20', 'aceptada', 14.10),
+    (17, 46, '2026-04-23 09:20:20', '2026-04-23 09:21:45', 'expirada', 14.10),
+    (17, 56, '2026-04-23 09:20:20', '2026-04-23 09:22:00', 'expirada', 14.10),
+    (18, 48, '2026-04-23 10:05:20', '2026-04-23 10:06:20', 'rechazada', 10.35),
+    (18, 57, '2026-04-23 10:05:20', NULL, 'expirada', 10.35),
+    (19, 48, '2026-04-23 11:30:20', '2026-04-23 11:30:55', 'aceptada', 12.30),
+    (19, 13, '2026-04-23 11:30:20', '2026-04-23 11:31:15', 'expirada', 12.30),
+    (19, 27, '2026-04-23 11:30:20', '2026-04-23 11:31:20', 'expirada', 12.30),
+    (20, 50, '2026-04-23 12:45:20', '2026-04-23 12:45:50', 'aceptada', 8.70),
+    (20, 51, '2026-04-23 12:45:20', '2026-04-23 12:46:10', 'expirada', 8.70),
+    (20, 28, '2026-04-23 12:45:20', '2026-04-23 12:46:20', 'expirada', 8.70),
+    (21, 51, '2026-04-23 15:10:20', '2026-04-23 15:11:30', 'aceptada', 13.65),
+    (21, 50, '2026-04-23 15:10:20', '2026-04-23 15:11:45', 'expirada', 13.65),
+    (22, 52, '2026-04-23 16:00:20', '2026-04-23 16:01:30', 'aceptada', 9.45),
+    (22, 53, '2026-04-23 16:00:20', '2026-04-23 16:01:45', 'expirada', 9.45),
+    (22, 59, '2026-04-23 16:00:20', '2026-04-23 16:01:55', 'expirada', 9.45),
+    (23, 54, '2026-04-23 17:25:20', NULL, 'expirada', 12.60),
+    (23, 60, '2026-04-23 17:25:20', NULL, 'expirada', 12.60),
+    (24, 54, '2026-04-24 08:40:20', '2026-04-24 08:40:55', 'aceptada', 9.90),
+    (24, 60, '2026-04-24 08:40:20', '2026-04-24 08:41:05', 'expirada', 9.90),
+    (25, 60, '2026-04-24 09:55:20', '2026-04-24 09:56:20', 'aceptada', 11.55),
+    (25, 54, '2026-04-24 09:55:20', '2026-04-24 09:56:35', 'expirada', 11.55),
+    (26, 56, '2026-04-24 11:10:20', '2026-04-24 11:10:55', 'aceptada', 13.20),
+    (26, 46, '2026-04-24 11:10:20', '2026-04-24 11:11:10', 'expirada', 13.20),
+    (26, 47, '2026-04-24 11:10:20', '2026-04-24 11:11:20', 'expirada', 13.20),
+    (27, 57, '2026-04-24 12:20:20', '2026-04-24 12:21:40', 'aceptada', 8.85),
+    (27, 48, '2026-04-24 12:20:20', '2026-04-24 12:21:55', 'expirada', 8.85),
+    (28, 50, '2026-04-24 13:05:20', NULL, 'pendiente', 6.60),
+    (28, 51, '2026-04-24 13:05:20', NULL, 'pendiente', 6.60),
+    (29, 53, '2026-04-24 14:35:20', NULL, 'pendiente', 8.25),
+    (29, 59, '2026-04-24 14:35:20', NULL, 'pendiente', 8.25),
+    (30, 59, '2026-04-24 18:15:20', '2026-04-24 18:16:20', 'aceptada', 15.30),
+    (30, 53, '2026-04-24 18:15:20', '2026-04-24 18:16:40', 'expirada', 15.30);
 
--- 9. PAGOS HISTORICOS
+-- INSERCIÓN DE DATOS EN PAGO
 
 INSERT INTO pago (
     id_viaje,
@@ -279,9 +390,18 @@ INSERT INTO pago (
     (7, 12.24, 2.04, 10.20, 'tarjeta_credito', 'completado', '2026-04-21 12:47:00'),
     (9, 12.42, 2.07, 10.35, 'wallet', 'completado', '2026-04-22 08:34:00'),
     (12, 12.78, 2.13, 10.65, 'efectivo', 'completado', '2026-04-22 11:40:00'),
-    (13, 14.22, 2.37, 11.85, 'tarjeta_credito', 'completado', '2026-04-22 12:32:00');
+    (13, 14.22, 2.37, 11.85, 'tarjeta_credito', 'completado', '2026-04-22 12:32:00'),
+    (16, 12.96, 2.16, 10.80, 'tarjeta_credito', 'completado', '2026-04-23 08:39:00'),
+    (17, 16.92, 2.82, 14.10, 'wallet', 'completado', '2026-04-23 09:59:00'),
+    (19, 14.76, 2.46, 12.30, 'tarjeta_credito', 'completado', '2026-04-23 12:02:00'),
+    (20, 10.44, 1.74, 8.70, 'efectivo', 'completado', '2026-04-23 13:13:00'),
+    (21, 16.38, 2.73, 13.65, 'wallet', 'completado', '2026-04-23 15:50:00'),
+    (24, 11.88, 1.98, 9.90, 'tarjeta_credito', 'completado', '2026-04-24 09:09:00'),
+    (25, 13.86, 2.31, 11.55, 'wallet', 'completado', '2026-04-24 10:29:00'),
+    (26, 15.84, 2.64, 13.20, 'tarjeta_credito', 'completado', '2026-04-24 11:42:00'),
+    (30, 18.36, 3.06, 15.30, 'efectivo', 'completado', '2026-04-24 18:53:00');
 
--- 10. VALORACIONES
+-- INSERCIÓN DE DATOS EN VALORACION
 
 INSERT INTO valoracion (
     id_viaje,
@@ -304,10 +424,22 @@ INSERT INTO valoracion (
     (7, 7, 19, 'conductor', 4, 'Conduccion correcta', '2026-04-21 12:50:00'),
     (9, 9, 21, 'conductor', 5, 'Excelente', '2026-04-22 08:40:00'),
     (12, 2, 24, 'conductor', 4, 'Buen servicio', '2026-04-22 11:45:00'),
-    (13, 3, 25, 'conductor', 5, 'Muy profesional', '2026-04-22 12:40:00');
+    (13, 3, 25, 'conductor', 5, 'Muy profesional', '2026-04-22 12:40:00'),
+    (16, 31, 46, 'conductor', 5, 'Conductor puntual y amable', '2026-04-23 08:45:00'),
+    (16, 46, 31, 'rider', 5, 'Cliente correcto', '2026-04-23 08:46:00'),
+    (17, 32, 47, 'conductor', 4, 'Trayecto cómodo', '2026-04-23 10:03:00'),
+    (17, 47, 32, 'rider', 5, 'Cliente amable', '2026-04-23 10:04:00'),
+    (19, 34, 48, 'conductor', 5, 'Muy buen servicio', '2026-04-23 12:05:00'),
+    (19, 48, 34, 'rider', 4, 'Rider puntual', '2026-04-23 12:06:00'),
+    (20, 35, 50, 'conductor', 4, 'Buen viaje', '2026-04-23 13:17:00'),
+    (21, 36, 51, 'conductor', 5, 'Servicio excelente', '2026-04-23 15:55:00'),
+    (24, 39, 54, 'conductor', 4, 'Conduccion correcta', '2026-04-24 09:13:00'),
+    (25, 40, 60, 'conductor', 5, 'Muy profesional', '2026-04-24 10:33:00'),
+    (26, 41, 56, 'conductor', 5, 'Viaje rápido y cómodo', '2026-04-24 11:46:00'),
+    (30, 45, 59, 'conductor', 4, 'Buen servicio en general', '2026-04-24 18:58:00'),
+    (30, 59, 45, 'rider', 5, 'Cliente educado', '2026-04-24 18:59:00');
 
--- 11. HISTORIAL DE ESTADOS
--- Se insertan manualmente como carga histórica de ejemplo.
+-- INSERCIÓN DE DATOS EN VIAJE_ESTADO_LOG
 
 INSERT INTO viaje_estado_log (
     id_viaje,
@@ -319,44 +451,64 @@ INSERT INTO viaje_estado_log (
     (1, 'solicitado', 'aceptado',  '2026-04-20 09:01:00', 'Aceptacion inicial del viaje'),
     (1, 'aceptado',   'en_curso',  '2026-04-20 09:05:00', 'Inicio del trayecto'),
     (1, 'en_curso',   'finalizado','2026-04-20 09:25:00', 'Fin del trayecto'),
-
     (2, 'solicitado', 'aceptado',  '2026-04-20 10:02:00', 'Aceptacion inicial del viaje'),
     (2, 'aceptado',   'en_curso',  '2026-04-20 10:07:00', 'Inicio del trayecto'),
     (2, 'en_curso',   'finalizado','2026-04-20 10:35:00', 'Fin del trayecto'),
-
     (3, 'solicitado', 'cancelado', '2026-04-20 11:05:00', 'Cancelacion del rider'),
-
     (4, 'solicitado', 'aceptado',  '2026-04-21 08:16:00', 'Aceptacion inicial del viaje'),
     (4, 'aceptado',   'en_curso',  '2026-04-21 08:20:00', 'Inicio del trayecto'),
     (4, 'en_curso',   'finalizado','2026-04-21 08:42:00', 'Fin del trayecto'),
-
     (5, 'solicitado', 'aceptado',  '2026-04-21 09:32:00', 'Aceptacion inicial del viaje'),
     (5, 'aceptado',   'en_curso',  '2026-04-21 09:36:00', 'Inicio del trayecto'),
     (5, 'en_curso',   'finalizado','2026-04-21 10:05:00', 'Fin del trayecto'),
-
     (6, 'solicitado', 'aceptado',  '2026-04-21 11:01:00', 'Aceptacion inicial del viaje'),
     (6, 'aceptado',   'en_curso',  '2026-04-21 11:04:00', 'Inicio del trayecto'),
     (6, 'en_curso',   'finalizado','2026-04-21 11:28:00', 'Fin del trayecto'),
-
     (7, 'solicitado', 'aceptado',  '2026-04-21 12:12:00', 'Aceptacion inicial del viaje'),
     (7, 'aceptado',   'en_curso',  '2026-04-21 12:15:00', 'Inicio del trayecto'),
     (7, 'en_curso',   'finalizado','2026-04-21 12:46:00', 'Fin del trayecto'),
-
     (8, 'solicitado', 'cancelado', '2026-04-21 13:10:00', 'Cancelacion automatica por falta de servicio'),
-
     (9, 'solicitado', 'aceptado',  '2026-04-22 08:01:00', 'Aceptacion inicial del viaje'),
     (9, 'aceptado',   'en_curso',  '2026-04-22 08:05:00', 'Inicio del trayecto'),
     (9, 'en_curso',   'finalizado','2026-04-22 08:33:00', 'Fin del trayecto'),
-
     (10,'solicitado', 'aceptado',  '2026-04-22 09:02:00', 'Aceptacion inicial del viaje'),
-
     (11,'solicitado', 'aceptado',  '2026-04-22 10:01:00', 'Aceptacion inicial del viaje'),
     (11,'aceptado',   'en_curso',  '2026-04-22 10:05:00', 'Inicio del trayecto'),
-
     (12,'solicitado', 'aceptado',  '2026-04-22 11:03:00', 'Aceptacion inicial del viaje'),
     (12,'aceptado',   'en_curso',  '2026-04-22 11:07:00', 'Inicio del trayecto'),
     (12,'en_curso',   'finalizado','2026-04-22 11:39:00', 'Fin del trayecto'),
-
     (13,'solicitado', 'aceptado',  '2026-04-22 12:02:00', 'Aceptacion inicial del viaje'),
     (13,'aceptado',   'en_curso',  '2026-04-22 12:06:00', 'Inicio del trayecto'),
-    (13,'en_curso',   'finalizado','2026-04-22 12:31:00', 'Fin del trayecto');
+    (13,'en_curso',   'finalizado','2026-04-22 12:31:00', 'Fin del trayecto'),
+    (16, 'solicitado', 'aceptado',   '2026-04-23 08:11:00', 'Aceptacion inicial del viaje'),
+    (16, 'aceptado',   'en_curso',   '2026-04-23 08:15:00', 'Inicio del trayecto'),
+    (16, 'en_curso',   'finalizado', '2026-04-23 08:38:00', 'Fin del trayecto'),
+    (17, 'solicitado', 'aceptado',   '2026-04-23 09:22:00', 'Aceptacion inicial del viaje'),
+    (17, 'aceptado',   'en_curso',   '2026-04-23 09:26:00', 'Inicio del trayecto'),
+    (17, 'en_curso',   'finalizado', '2026-04-23 09:58:00', 'Fin del trayecto'),
+    (18, 'solicitado', 'cancelado',  '2026-04-23 10:12:00', 'Cancelacion del rider'),
+    (19, 'solicitado', 'aceptado',   '2026-04-23 11:31:00', 'Aceptacion inicial del viaje'),
+    (19, 'aceptado',   'en_curso',   '2026-04-23 11:35:00', 'Inicio del trayecto'),
+    (19, 'en_curso',   'finalizado', '2026-04-23 12:01:00', 'Fin del trayecto'),
+    (20, 'solicitado', 'aceptado',   '2026-04-23 12:46:00', 'Aceptacion inicial del viaje'),
+    (20, 'aceptado',   'en_curso',   '2026-04-23 12:50:00', 'Inicio del trayecto'),
+    (20, 'en_curso',   'finalizado', '2026-04-23 13:12:00', 'Fin del trayecto'),
+    (21, 'solicitado', 'aceptado',   '2026-04-23 15:12:00', 'Aceptacion inicial del viaje'),
+    (21, 'aceptado',   'en_curso',   '2026-04-23 15:16:00', 'Inicio del trayecto'),
+    (21, 'en_curso',   'finalizado', '2026-04-23 15:49:00', 'Fin del trayecto'),
+    (22, 'solicitado', 'aceptado',   '2026-04-23 16:02:00', 'Aceptacion inicial del viaje'),
+    (22, 'aceptado',   'en_curso',   '2026-04-23 16:06:00', 'Inicio del trayecto'),
+    (23, 'solicitado', 'cancelado',  '2026-04-23 17:35:00', 'Cancelacion automatica por falta de servicio'),
+    (24, 'solicitado', 'aceptado',   '2026-04-24 08:41:00', 'Aceptacion inicial del viaje'),
+    (24, 'aceptado',   'en_curso',   '2026-04-24 08:45:00', 'Inicio del trayecto'),
+    (24, 'en_curso',   'finalizado', '2026-04-24 09:08:00', 'Fin del trayecto'),
+    (25, 'solicitado', 'aceptado',   '2026-04-24 09:57:00', 'Aceptacion inicial del viaje'),
+    (25, 'aceptado',   'en_curso',   '2026-04-24 10:02:00', 'Inicio del trayecto'),
+    (25, 'en_curso',   'finalizado', '2026-04-24 10:28:00', 'Fin del trayecto'),
+    (26, 'solicitado', 'aceptado',   '2026-04-24 11:11:00', 'Aceptacion inicial del viaje'),
+    (26, 'aceptado',   'en_curso',   '2026-04-24 11:16:00', 'Inicio del trayecto'),
+    (26, 'en_curso',   'finalizado', '2026-04-24 11:41:00', 'Fin del trayecto'),
+    (27, 'solicitado', 'aceptado',   '2026-04-24 12:22:00', 'Aceptacion inicial del viaje'),
+    (30, 'solicitado', 'aceptado',   '2026-04-24 18:17:00', 'Aceptacion inicial del viaje'),
+    (30, 'aceptado',   'en_curso',   '2026-04-24 18:21:00', 'Inicio del trayecto'),
+    (30, 'en_curso',   'finalizado', '2026-04-24 18:52:00', 'Fin del trayecto');

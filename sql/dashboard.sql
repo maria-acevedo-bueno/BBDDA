@@ -248,7 +248,7 @@ SHOW STATUS LIKE 'Innodb_buffer_pool_read_requests';
 SHOW STATUS LIKE 'Innodb_buffer_pool_reads';
 
 -- Hit ratio del buffer pool, que calcula: (read_requests - reads) / read_requests * 100
--- Se controla la división por cero para evitar errores en entornos recién arrancados.
+-- Se controla la división por cero para evitar errores en entornos recién iniciados.
 SELECT
     ROUND(
         CASE

@@ -1,50 +1,32 @@
 USE ride_hailing;
 
--- 1. OBJETIVO DEL PLAN:
--- Backup: copia de seguridad de datos y configuración.
--- Restore: recuperar datos desde un backup.
--- RPO: pérdida máxima de datos aceptable.
--- RTO: tiempo máximo para recuperar el servicio.
--- PITR: recuperación a un punto concreto en el tiempo usando backup + binlog.
-
--- Criterio para la práctica:
 -- RPO: 24 horas con backup diario.
--- RTO: restauración manual en entorno Docker.
--- Método principal: backup lógico con mysqldump.
--- Mejora posible: PITR si el binlog está activo.
+-- RTO: restauración manual.
+-- Método principal: mysqldump.
+-- Mejora posible: PITR (si el binlog está activo)
 
--- Este archivo está pensado para documentar el plan y dejar preparados los comandos que se ejecutarían desde la terminal.
--- Los comandos de backup usan backup_user, creado en permissions.sql, para mantener la separación de cuentas por función.
+-- Los comandos de backup son ejecutados por el backup_user
 
--- La configuración de mysql/conf.d/custom.cnf activa:
--- log_bin=mysql-bin
--- binlog_format=ROW
--- sync_binlog=1
--- binlog_expire_logs_seconds=604800
--- Esto permite plantear recuperación PITR durante 7 días si se conserva el backup completo y los binlogs necesarios.
+-- La configuración de custom.cnf nos permite realizar PITR durante 7 días si se conserva el backup completo y los binlogs necesarios.
 
--- 2. BACKUP LÓGICO DE ride_hailing:
--- Se debe ejecutar en terminal, no dentro de MySQL.
--- Incluye la base de datos, procedimientos, triggers y eventos.
--- Se usa --single-transaction para obtener un snapshot consistente con InnoDB sin bloquear las tablas durante toda la copia.
+-- OPCIONES DE BACKUP HACIENDO USO DE MYSQLDUMP
+
+-- BACKUP LÓGICO:
 
 /* 
    docker exec mysql8 mysqldump \
-   -ubackup_user -pBackup_Pass_2026! \
+   -ubackup_user -pBackup1234 \
    --databases ride_hailing \
    --single-transaction \
    --routines --triggers --events \
    --set-gtid-purged=OFF \> backup_ride_hailing_$(date +%Y%m%d).sql
 */
 
--- 3. BACKUP COMPLETO DEL SERVIDOR:
--- Incluye todas las bases de datos.
--- En un entorno real permite incluir también la base mysql, donde están usuarios y privilegios.
--- Se debe ejecutar en terminal.
+-- BACKUP COMPLETO DEL SERVIDOR (Incluye todas las bases de datos):
 
 /* 
    docker exec mysql8 mysqldump \
-   -ubackup_user -pBackup_Pass_2026! \
+   -ubackup_user -pBackup1234 \
    --all-databases \
    --single-transaction \
    --routines --triggers --events \
