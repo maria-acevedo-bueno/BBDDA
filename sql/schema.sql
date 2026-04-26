@@ -441,7 +441,7 @@ BEGIN
     END IF;
 END$$
 
-DELIMITER;
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS sp_aceptar_oferta;
 
@@ -583,7 +583,7 @@ BEGIN
     END IF;
 END$$
 
-DELIMITER;
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS sp_iniciar_viaje;
 
@@ -652,7 +652,7 @@ BEGIN
     END IF;
 END$$
 
-DELIMITER;
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS sp_finalizar_viaje_y_pagar;
 
@@ -798,7 +798,7 @@ BEGIN
     END IF;
 END$$
 
-DELIMITER;
+DELIMITER ;
 
 -- TRIGGERS
 
@@ -830,7 +830,7 @@ BEGIN
     END IF;
 END$$
 
-DELIMITER;
+DELIMITER ;
 
 DROP TRIGGER IF EXISTS tr_audit_viaje_insert;
 
@@ -858,7 +858,7 @@ BEGIN
     );
 END$$
 
-DELIMITER;
+DELIMITER ;
 
 DROP TRIGGER IF EXISTS tr_audit_viaje_update;
 
@@ -886,7 +886,7 @@ BEGIN
     );
 END$$
 
-DELIMITER;
+DELIMITER ;
 
 DROP TRIGGER IF EXISTS tr_audit_oferta_update;
 
@@ -914,7 +914,7 @@ BEGIN
     );
 END$$
 
-DELIMITER;
+DELIMITER ;
 
 DROP TRIGGER IF EXISTS tr_audit_pago_insert;
 
@@ -941,4 +941,4 @@ BEGIN
     );
 END$$
 
-DELIMITER;
+DELIMITER ;
