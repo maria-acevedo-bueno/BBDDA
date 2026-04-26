@@ -931,4 +931,62 @@ WHERE id_conductor = 20
 
 -- **************************************************************************************************************************************************
 
--- 
+-- 5. DELETES INTERESANTES
+
+-- 5.1. Intento de borrado de un usuario con dependencias.
+
+SELECT
+    u.id_usuario,
+    u.nombre,
+    u.apellido1,
+    r.id_usuario AS existe_como_rider
+FROM usuario u
+JOIN rider r
+    ON r.id_usuario = u.id_usuario
+WHERE u.id_usuario = 1;
+
+DELETE FROM usuario
+    WHERE id_usuario = 1;
+
+-- 5.2. Crear un usuario de prueba que no será rider ni conductor.
+-- Al no tener relaciones con otras tablas, se puede borrar directamente.
+INSERT INTO usuario (
+    nombre,
+    apellido1,
+    apellido2,
+    email,
+    telefono,
+    activo
+) VALUES (
+    'Usuario',
+    'Temporal',
+    'Delete',
+    'usuario.temporal.delete@ridehailing.test',
+    '699990001',
+    TRUE
+);
+
+SELECT
+    id_usuario,
+    nombre,
+    apellido1,
+    email,
+    telefono,
+    activo
+FROM usuario
+WHERE email = 'usuario.temporal.delete@ridehailing.test';
+
+DELETE FROM usuario
+WHERE email = 'usuario.temporal.delete@ridehailing.test';
+
+SELECT
+    id_usuario,
+    nombre,
+    apellido1,
+    email,
+    telefono,
+    activo
+FROM usuario
+WHERE email = 'usuario.temporal.delete@ridehailing.test';
+
+-- **************************************************************************************************************************************************
