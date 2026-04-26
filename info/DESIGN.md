@@ -1222,7 +1222,7 @@ El comando se ejecuta desde la terminal, no dentro del cliente MySQL:
 
 ```bash
 docker exec mysql8 mysqldump \
-  -ubackup_user -pBackup_Pass_2026! \
+  -ubackup_user -pBackup1234! \
   --databases ride_hailing \
   --single-transaction \
   --routines --triggers --events \
@@ -1234,12 +1234,12 @@ Las opciones principales son:
 
 | Opción | Finalidad |
 | --- | --- |
-| `--databases ride_hailing` | Incluye la base de datos `ride_hailing`.                                                    |
-| `--single-transaction`     | Genera una copia consistente en InnoDB sin bloquear las tablas durante toda la exportación. |
-| `--routines`               | Incluye procedimientos almacenados.                                                         |
-| `--triggers`               | Incluye triggers.                                                                           |
-| `--events`                 | Incluye eventos si existieran.                                                              |
-| `--set-gtid-purged=OFF`    | Evita incluir información GTID, ya que no se usa replicación GTID en la práctica.           |
+| `--databases ride_hailing` | Incluye la base de datos `ride_hailing`. |
+| `--single-transaction` | Genera una copia consistente en InnoDB sin bloquear las tablas durante toda la exportación. |
+| `--routines` | Incluye procedimientos almacenados. |
+| `--triggers` | Incluye triggers. |
+| `--events` | Incluye eventos si existieran. |
+| `--set-gtid-purged=OFF` | Evita incluir información GTID, ya que no se usa replicación GTID en la práctica. |
 
 Esta copia es la principal para restaurar la base de datos del proyecto.
 
@@ -1249,7 +1249,7 @@ También se documenta un backup completo del servidor:
 
 ```bash
 docker exec mysql8 mysqldump \
-  -ubackup_user -pBackup_Pass_2026! \
+  -ubackup_user -pBackup1234 \
   --all-databases \
   --single-transaction \
   --routines --triggers --events \
@@ -1267,7 +1267,7 @@ También se documenta una copia parcial de tablas concretas:
 
 ```bash
 docker exec mysql8 mysqldump \
-  -ubackup_user -pBackup_Pass_2026! \
+  -ubackup_user -pBackup1234 \
   --single-transaction \
   ride_hailing \
   company \
@@ -1366,7 +1366,7 @@ Esto permite validar que no solo se han restaurado los datos, sino también los 
 
 ### 7.8 PITR
 
-También se documenta la posibilidad de hacer PITR, es decir, recuperación a un punto concreto en el tiempo.
+También existe la posibilidad de hacer PITR, es decir, recuperación a un punto concreto en el tiempo.
 
 Para que PITR sea posible, la configuración de MySQL debe tener activo el binlog. En el archivo `mysql/conf.d/custom.cnf` se ha incluido:
 
@@ -1381,10 +1381,10 @@ Esto significa:
 
 | Parámetro | Finalidad |
 | --- | --- |
-| `log_bin=mysql-bin`                 | Activa el binary log.                                         |
-| `binlog_format=ROW`                 | Registra los cambios fila a fila, adecuado para recuperación. |
-| `sync_binlog=1`                     | Fuerza mayor durabilidad del binlog.                          |
-| `binlog_expire_logs_seconds=604800` | Mantiene binlogs durante 7 días.                              |
+| `log_bin=mysql-bin` | Activa el binary log. |
+| `binlog_format=ROW` | Registra los cambios fila a fila, adecuado para recuperación. |
+| `sync_binlog=1` | Fuerza mayor durabilidad del binlog. |
+| `binlog_expire_logs_seconds=604800` | Mantiene binlogs durante 7 días. |
 
 Para comprobar si PITR es viable, se usan:
 
@@ -1420,7 +1420,7 @@ Finalmente se aplican esos cambios:
 cat cambios.sql | docker exec -i mysql8 mysql -uroot -prootpass
 ```
 
-También se documenta cómo buscar una operación concreta en el binlog, por ejemplo un `DELETE` accidental:
+También es posible buscar una operación concreta en el binlog, por ejemplo un `DELETE` accidental:
 
 ```bash
 docker exec mysql8 mysqlbinlog \
@@ -1440,7 +1440,7 @@ docker exec mysql8 mysqlbinlog \
 
 ### 7.10 Automatización de backups
 
-El archivo documenta un script de backup con rotación, pensado para guardarse como `backup_mysql.sh`.
+Otra alternativa sería hacer uso de un script de backup con rotación (e.g.`backup_mysql.sh`).
 
 El script:
 
@@ -1462,7 +1462,7 @@ RETENTION_DAYS=7
 mkdir -p "${BACKUP_DIR}"
 
 docker exec mysql8 mysqldump \
-  -ubackup_user -pBackup_Pass_2026! \
+  -ubackup_user -pBackup1234 \
   --databases ride_hailing \
   --single-transaction \
   --routines --triggers --events \
