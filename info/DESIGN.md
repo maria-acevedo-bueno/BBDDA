@@ -1046,14 +1046,6 @@ Se trata de un panel SQL ejecutable que combina consultas de negocio, auditoría
 
 El objetivo es poder comprobar, tanto el comportamiento de la plataforma como el estado del servidor MySQL.
 
-## 6. Dashboard
-
-El dashboard contiene un conjunto de consultas para revisar el estado de la base de datos.
-
-Se trata de un panel SQL ejecutable que combina consultas de negocio, auditoría e internas del servidor haciendo uso de `SELECT`, `SHOW STATUS`, `SHOW VARIABLES`, `information_schema`, `performance_schema` y `EXPLAIN`.
-
-El objetivo es poder comprobar, tanto el comportamiento de la plataforma como el estado del servidor MySQL.
-
 ### 6.1 Resumen general
 
 La primera parte del dashboard muestra un resumen global de los datos cargados en las tablas principales:
