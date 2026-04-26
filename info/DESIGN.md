@@ -1002,90 +1002,49 @@ Estos serían los resultados posibles:
 
 ### 5.2 Triggers
 
-Los triggers se usan para registrar automáticamente operaciones importantes. Así, la aplicación no tiene que insertar manualmente registros de auditoría cada vez que ocurre un cambio relevante.
-
-Todos los triggers definidos son `AFTER`, es decir, se ejecutan después de que la operación principal se haya realizado correctamente.
+Con los triggers se registran automáticamente en tablas de auditoría operaciones importantes. 
+Todos los triggers definidos son `AFTER`, actúan después de que el cambio ya está hecho.
 
 #### `tr_audit_viaje_estado`
 
-Este trigger registra los cambios de estado de los viajes en la tabla `viaje_estado_log`.
-
+Con este trigger se registran los cambios de estado de los viajes en la tabla `viaje_estado_log`.
 Se ejecuta después de un `UPDATE` sobre `viaje`, pero solo inserta un registro si el estado ha cambiado realmente.
 
-Para comprobarlo se usa el operador `<=>`, que compara de forma segura incluso cuando puede haber valores `NULL`:
+Cuando detecta un cambio, guarda el identificador del viaje, el estado anterior, el estado nuevo, la fecha del cambio y un comentario. Así, se hace  el historial  de estados de cada viaje.
 
-```sql
-IF NOT (OLD.estado <=> NEW.estado) THEN
-```
-
-Cuando detecta un cambio, guarda:
-
-- el identificador del viaje
-- el estado anterior
-- el estado nuevo
-- la fecha del cambio
-- un comentario
-
-Este trigger permite reconstruir el historial completo de estados de cada viaje.
+El uso de `<=> (operador NULL-safe)`es para  evitar falsos positivos cuando se comparan valores que podrían ser NULL.
 
 #### `tr_audit_viaje_insert`
 
-Este trigger se ejecuta cuando se inserta un nuevo viaje.
+Este trigger se ejecuta cuando se inserta un nuevo viaje. Registra en `audit_operacion` la creación del viaje, e indica:
 
-Añade un registro en `audit_operacion` indicando:
-
-- la tabla afectada
-- el identificador del viaje creado
-- la acción `INSERT`
-- el usuario MySQL que realizó la operación
-- una descripción del evento.
-
-Sirve para auditar la creación de nuevas solicitudes de viaje.
+- La tabla afectada.
+- El identificador del viaje creado.
+- La acción `INSERT`.
+- El usuario MySQL que realizó la operación.
+- Una descripción del evento.
 
 #### `tr_audit_viaje_update`
 
-Este trigger se ejecuta cuando se actualiza un viaje.
+`tr_audit_viaje_update` se ejecuta cuando se actualiza un viaje. Registra en `audit_operacion` cualquier actualización del viaje.
 
-Registra la operación en `audit_operacion`, incluyendo el estado anterior y el estado nuevo del viaje.
-
-Complementa a `tr_audit_viaje_estado`: mientras `viaje_estado_log` guarda el historial funcional de estados, `audit_operacion` guarda la auditoría general de la operación realizada.
+Complementa a `tr_audit_viaje_estado` porque  mientras `viaje_estado_log` guarda el historial funcional de estados, `audit_operacion` guarda la auditoría general de la operación realizada.
 
 #### `tr_audit_oferta_update`
 
-Este trigger se ejecuta cuando se actualiza una oferta.
-
-Registra en `audit_operacion` el cambio realizado sobre la oferta, especialmente los cambios de estado, por ejemplo:
-
-- `pendiente` a `aceptada`
-- `pendiente` a `expirada`
-- `pendiente` a `rechazada`
-
-Es útil para revisar cómo se resolvieron las ofertas generadas para un viaje.
+Se ejecuta cuando se actualiza una oferta, registrando en `audit_operacion` cambios de estado en las ofertas.
 
 #### `tr_audit_pago_insert`
 
-Este trigger se ejecuta cuando se inserta un pago.
+Con este trigger, se registra en `audit_operacion`la creación de un pago, indicando el viaje asociado y el importe total, aportando así trazabilidad.
 
-Registra en `audit_operacion` la creación del pago, indicando el viaje asociado y el importe total.
+## 6. Dashboard
 
-Sirve para dejar trazabilidad de la liquidación económica de los viajes.
+El dashboard contiene un conjunto de consultas para revisar el estado de la base de datos.
 
-#### Justificación del diseño
+Se trata de un panel SQL ejecutable que combina consultas de negocio, auditoría e internas del servidor haciendo uso de `SELECT`, `SHOW STATUS`, `SHOW VARIABLES`, `information_schema`, `performance_schema` y `EXPLAIN`.
 
-El uso conjunto de procedimientos almacenados y triggers mejora la consistencia y la trazabilidad del sistema.
-
-Los procedimientos almacenados permiten que las operaciones críticas se ejecuten de forma controlada, transaccional y con validaciones previas. Esto es especialmente importante en procesos como la aceptación de ofertas, donde hay riesgo de concurrencia si dos conductores intentan aceptar el mismo viaje.
-
-Los triggers permiten registrar automáticamente eventos importantes sin depender de la aplicación. Gracias a ellos, los cambios de estado, inserciones de viajes, actualizaciones de ofertas y creación de pagos quedan reflejados en tablas de auditoría.
-
-En conjunto, esta solución permite:
-
-- centralizar la lógica crítica en la base de datos
-- evitar actualizaciones manuales inconsistentes
-- controlar el ciclo de vida del viaje
-- prevenir dobles aceptaciones de ofertas
-- asegurar que los pagos se generan una sola vez
-- mantener auditoría automática de operaciones relevantes
+El objetivo es poder comprobar, tanto el comportamiento de la plataforma como el estado del servidor MySQL.
 
 ## 6. Dashboard
 
