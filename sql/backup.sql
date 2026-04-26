@@ -24,10 +24,11 @@ USE ride_hailing;
 */
 
 -- BACKUP COMPLETO DEL SERVIDOR (Incluye todas las bases de datos):
+-- Este backup se recomienda ejecutarlo con root o con un usuario administrador.
 
 /* 
    docker exec mysql8 mysqldump \
-   -ubackup_user -pBackup1234 \
+   -uroot -prootpass \
    --all-databases \
    --single-transaction \
    --routines --triggers --events \
@@ -121,7 +122,7 @@ SELECT
 FROM information_schema.VIEWS
 WHERE TABLE_SCHEMA = 'ride_hailing';
 
--- SE COMBRUEBA SI SE PUEDE HACER PITR
+-- SE COMPRUEBA SI SE PUEDE HACER PITR
 -- Para que PITR sea viable, log_bin debe estar ON y binlog_format debería ser ROW (custom.cnf está configurado para ello).
 SHOW VARIABLES LIKE 'log_bin';
 SHOW VARIABLES LIKE 'binlog_format';

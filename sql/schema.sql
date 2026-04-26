@@ -469,7 +469,6 @@ BEGIN
     END;
 
     -- Cualquier error SQL provoca rollback completo.
-    -- Si se intenta aceptar una segunda oferta del mismo viaje, uk_oferta_unica_aceptada_por_viaje también provocaría error y rollback.
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
