@@ -381,15 +381,13 @@ La tabla `conductor` representa a los usuarios que pueden recibir ofertas y real
 
 Su clave primaria también referencia a `usuario(id_usuario)`. Además, cada conductor pertenece obligatoriamente a una compañía mediante `id_company` que es una clave foránea hacia `company(id_company)`.
 
-El campo `numero_licencia` es único, ya que identifica de forma el permiso de conducción de cada conductor. El campo `estado_conductor` permite controlar su disponibilidad mediante los valores `disponible`, `en_viaje`, `desconectado` y `suspendido`, algo que nos permitirá realizar comprobaciones en los procedimientos almacenados.
+El campo `numero_licencia` es único, ya que identifica el permiso de conducción de cada conductor. El campo `estado_conductor` permite controlar su disponibilidad mediante los valores `disponible`, `en_viaje`, `desconectado` y `suspendido`, algo que nos permitirá realizar comprobaciones en los procedimientos almacenados.
 
 La tabla incluye índices sobre `id_company` y `estado_conductor`, ya que son columnas frecuentes en consultas, especialmente para localizar conductores disponibles por empresa o estado.
 
 #### `vehiculo`
 
-La tabla `vehiculo` almacena los vehículos gestionados por las compañías.
-
-Cada vehículo pertenece a una compañía.
+La tabla `vehiculo` almacena los vehículos gestionados por las compañías. Cada vehículo pertenece a una compañía.
 
 La matrícula se define como única, ya que identifica al vehículo y no puede estar duplicada. La columna `capacidad` tiene una restricción que obliga a que su valor sea mayor que cero, evitando datos imposibles.
 
@@ -407,9 +405,7 @@ Cuando `fecha_hasta` es `NULL`, la asignación se considera vigente. Los índice
 
 #### `viaje`
 
-La tabla `viaje` representa el ciclo de vida completo de un trayecto solicitado por un rider.
-
-Cada viaje pertenece obligatoriamente a un rider.
+La tabla `viaje` representa el ciclo de vida completo de un trayecto solicitado por un rider. Cada viaje pertenece obligatoriamente a un rider.
 
 Las columnas `id_conductor` y `id_vehiculo` pueden ser NULL porque un viaje puede existir inicialmente en estado `solicitado`, antes de que haya sido aceptado por un conductor. Cuando el viaje es aceptado, se asignan el conductor y el vehículo correspondientes.
 
@@ -423,9 +419,9 @@ Los índices sobre estado, conductor y rider permiten optimizar consultas frecue
 
 #### `oferta`
 
-La tabla `oferta` almacena las ofertas enviadas a los conductores para un viaje.
+La tabla `oferta` almacena las ofertas enviadas a los conductores para un viaje. Cada oferta pertenece a un viaje y a un conductor. 
 
-Cada oferta pertenece a un viaje y a un conductor. La restricción `UNIQUE (id_viaje, id_conductor)` impide que el mismo conductor reciba más de una vez la misma oferta para el mismo viaje.
+La restricción `UNIQUE (id_viaje, id_conductor)` impide que el mismo conductor reciba más de una vez la misma oferta para el mismo viaje.
 
 El campo `estado_oferta` permite controlar si la oferta está `pendiente`, `aceptada`, `rechazada` o `expirada`.
 
@@ -447,9 +443,7 @@ El campo `metodo_pago` limita los métodos permitidos a `tarjeta_credito`, `efec
 
 #### `valoracion`
 
-La tabla `valoracion` almacena las valoraciones emitidas por los usuarios tras un viaje.
-
-Cada valoración se asocia a un viaje. Además, registra quién emite la valoración y quién la recibe.
+La tabla `valoracion` almacena las valoraciones emitidas por los usuarios tras un viaje. Cada valoración se asocia a un viaje. Además, registra quién emite la valoración y quién la recibe.
 
 El campo `rol_valorado` indica si el usuario valorado actúa como `rider` o como `conductor` ya que los riders pueden valorar al conductor y viceversa. 
 
@@ -459,9 +453,7 @@ El índice sobre `(id_usuario_valorado, fecha_valoracion)` facilita consultas de
 
 #### `viaje_estado_log`
 
-La tabla `viaje_estado_log` registra el historial de cambios de estado de los viajes.
-
-Cada fila almacena el viaje afectado, el estado anterior, el nuevo estado, la fecha del cambio y un comentario descriptivo.
+La tabla `viaje_estado_log` registra el historial de cambios de estado de los viajes. Cada fila almacena el viaje afectado, el estado anterior, el nuevo estado, la fecha del cambio y un comentario descriptivo.
 
 Esta tabla se actualiza automáticamente mediante el trigger `tr_audit_viaje_estado`, que inserta un registro cada vez que el campo `estado` de un viaje cambia.
 
@@ -503,7 +495,7 @@ Las relaciones principales de la base de datos se pueden resumir mediante las si
 
 La seguridad de la base de datos se ha organizado mediante roles de MySQL. En lugar de conceder permisos directamente a cada usuario, se definen roles con permisos concretos y después se asignan esos roles a usuarios específicos.
 
-El objetivo principal es aplicar el principio de mínimos privilegios: cada usuario solo debe tener los permisos necesarios para cumplir su función.
+El objetivo principal es aplicar el principio de mínimos privilegios, cada usuario solo debe tener los permisos necesarios para cumplir su función.
 
 ### 3.1 Roles definidos
 
@@ -576,8 +568,7 @@ Las vistas se definen en `permissions.sql`, mientras que los índices principale
 
 Las vistas permiten mostrar solo la información necesaria para cada tipo de usuario. De esta forma, no hace falta conceder acceso directo a todas las tablas base.
 
-En este proyecto las vistas se han organizado según el rol que las utiliza.
-Esto permite separar mejor las responsabilidades de cada usuario y aplicar el principio de mínimos privilegios.
+En este proyecto las vistas se han organizado según el rol que las utiliza. Esto permite separar mejor las responsabilidades de cada usuario y aplicar el principio de mínimos privilegios.
 
 | Vista | Finalidad | Roles con acceso funcional |
 | --- | --- | --- |
@@ -861,7 +852,7 @@ DECLARE EXIT HANDLER FOR SQLEXCEPTION
 ```
 Así, si ocurre un error durante la operación, se ejecuta `ROLLBACK` y la base de datos no queda en un estado intermedio.
 
-Todos los procedimientos siguen el mismo patrón: START TRANSACTION → validaciones con FOR UPDATE → operaciones → COMMIT o ROLLBACK con código de resultado en el parámetro OUT p_resultado.
+Todos los procedimientos siguen el mismo patrón: `START TRANSACTION` --> validaciones con `FOR UPDATE` --> operaciones --> `COMMIT` o `ROLLBACK` con código de resultado en el parámetro `OUT p_resultado`.
 
 ### 5.1 Procedimientos almacenados
 
@@ -869,14 +860,14 @@ Todos los procedimientos siguen el mismo patrón: START TRANSACTION → validaci
 
 La función de este procedimiento es crear el viaje para luego generar ofertas para todos los conductores disponibles con vehículo activo. Si no hay ninguno, hace rollback.
 
-Primero recibe los datos del rider, las coordenadas de origen y destino, las direcciones y la distancia estimada. Si todo es válido, entoncesinserta un nuevo viaje en estado `solicitado`.
+Primero recibe los datos del rider, las coordenadas de origen y destino, las direcciones y la distancia estimada. Si todo es válido, entonces inserta un nuevo viaje en estado `solicitado`.
 
 Además, antes de crear el viaje, comprueba que el rider existe y que el usuario está activo, bloqueando la fila correspondiente usando:
 ```sql
 FOR UPDATE
 ```
 Así, se evitan cambios concurrentes sobre ese rider durante la creación del viaje.
-Cuanddo se inserta el viaje, el procedimiento calcula un importe base para las ofertas:
+Cuando se inserta el viaje, el procedimiento calcula un importe base para las ofertas:
 
 ```sql
 ROUND(p_distancia_km * 1.50, 2)
@@ -896,8 +887,8 @@ Estos serían los resultados posibles:
 
 #### `sp_aceptar_oferta`
 
-Con este procedimiento, se asigna el viaje al conductor que acepta, marca su oferta como aceptada, expira las demás y luego cambia su estado a en_viaje. Se usa bloqueo pesimista (FOR UPDATE).
-Este procedimeinto asegura  que un mismo viaje no se  acepte por dos conductores distintos.
+Con este procedimiento, se asigna el viaje al conductor que acepta, marca su oferta como aceptada, expira las demás y luego cambia su estado a `en_viaje`. Se usa bloqueo pesimista (`FOR UPDATE`).
+Este procedimiento asegura  que un mismo viaje no se  acepte por dos conductores distintos.
 
 Primero bloquea el viaje con:
 
@@ -936,12 +927,12 @@ Estos serían los resultados posibles:
 
 | Resultado | Significado |
 | --- | --- |
-| `OK`                        | La oferta se ha aceptado correctamente.            |
-| `ERROR_VIAJE_NO_EXISTE`     | El viaje indicado no existe.                       |
-| `ERROR_ESTADO_NO_VALIDO`    | El viaje no está en estado `solicitado`.           |
+| `OK` | La oferta se ha aceptado correctamente. |
+| `ERROR_VIAJE_NO_EXISTE` | El viaje indicado no existe. |
+| `ERROR_ESTADO_NO_VALIDO` | El viaje no está en estado `solicitado`. |
 | `ERROR_OFERTA_NO_PENDIENTE` | No existe una oferta pendiente para ese conductor. |
-| `ERROR_VEHICULO_NO_VALIDO`  | El vehículo no es válido para ese conductor.       |
-| `ERROR_TRANSACCION`         | Se ha producido un error SQL durante la operación. |
+| `ERROR_VEHICULO_NO_VALIDO` | El vehículo no es válido para ese conductor. |
+| `ERROR_TRANSACCION` | Se ha producido un error SQL durante la operación. |
 
 #### `sp_iniciar_viaje`
 
@@ -960,15 +951,15 @@ Estos serían los resultados posibles:
 
 | Resultado | Significado |
 | --- | --- |
-| `OK`                         | El viaje se ha iniciado correctamente.             |
-| `ERROR_VIAJE_NO_EXISTE`      | El viaje indicado no existe.                       |
-| `ERROR_ESTADO_NO_VALIDO`     | El viaje no está en estado `aceptado`.             |
-| `ERROR_VIAJE_SIN_ASIGNACION` | El viaje no tiene conductor o vehículo asignado.   |
-| `ERROR_TRANSACCION`          | Se ha producido un error SQL durante la operación. |
+| `OK` | El viaje se ha iniciado correctamente. |
+| `ERROR_VIAJE_NO_EXISTE` | El viaje indicado no existe. |
+| `ERROR_ESTADO_NO_VALIDO` | El viaje no está en estado `aceptado`. |
+| `ERROR_VIAJE_SIN_ASIGNACION` | El viaje no tiene conductor o vehículo asignado. |
+| `ERROR_TRANSACCION` | Se ha producido un error SQL durante la operación. |
 
 #### `sp_finalizar_viaje_y_pagar`
 
-Se encarga de  cerrar el ciclo principal del viaje, y luego libera al conductor (lo pone en esto `disponible`) y genera el pago aplicando el 20% de comisión.
+Se encarga de  cerrar el ciclo principal del viaje, y luego libera al conductor (lo pone en estado `disponible`) y genera el pago aplicando el 20% de comisión.
 Primero bloquea el viaje y comprueba que está en estado `en_curso` y después valida que el método de pago recibido sea uno de los permitidos: `tarjeta_credito`, `efectivo`, `wallet`.
 
 También se comprueba que no exista ya un pago para ese viaje. Se hace en la tabla `pago` usando:
@@ -992,13 +983,13 @@ Estos serían los resultados posibles:
 
 | Resultado | Significado |
 | --- | --- |
-| `OK`                          | El viaje se ha finalizado y pagado correctamente.  |
-| `ERROR_VIAJE_NO_EXISTE`       | El viaje indicado no existe.                       |
-| `ERROR_ESTADO_NO_VALIDO`      | El viaje no está en estado `en_curso`.             |
-| `ERROR_METODO_PAGO_NO_VALIDO` | El método de pago no está permitido.               |
-| `ERROR_PAGO_YA_EXISTE`        | El viaje ya tiene un pago asociado.                |
-| `ERROR_SIN_OFERTA_ACEPTADA`   | No existe oferta aceptada para calcular el pago.   |
-| `ERROR_TRANSACCION`           | Se ha producido un error SQL durante la operación. |
+| `OK` | El viaje se ha finalizado y pagado correctamente. |
+| `ERROR_VIAJE_NO_EXISTE` | El viaje indicado no existe. |
+| `ERROR_ESTADO_NO_VALIDO` | El viaje no está en estado `en_curso`. |
+| `ERROR_METODO_PAGO_NO_VALIDO` | El método de pago no está permitido. |
+| `ERROR_PAGO_YA_EXISTE` | El viaje ya tiene un pago asociado. |
+| `ERROR_SIN_OFERTA_ACEPTADA` | No existe oferta aceptada para calcular el pago. |
+| `ERROR_TRANSACCION` | Se ha producido un error SQL durante la operación. |
 
 ### 5.2 Triggers
 
@@ -1010,9 +1001,9 @@ Todos los triggers definidos son `AFTER`, actúan después de que el cambio ya e
 Con este trigger se registran los cambios de estado de los viajes en la tabla `viaje_estado_log`.
 Se ejecuta después de un `UPDATE` sobre `viaje`, pero solo inserta un registro si el estado ha cambiado realmente.
 
-Cuando detecta un cambio, guarda el identificador del viaje, el estado anterior, el estado nuevo, la fecha del cambio y un comentario. Así, se hace  el historial  de estados de cada viaje.
+Cuando detecta un cambio, guarda el identificador del viaje, el estado anterior, el estado nuevo, la fecha del cambio y un comentario. Así, se hace el historial de estados de cada viaje.
 
-El uso de `<=> (operador NULL-safe)`es para  evitar falsos positivos cuando se comparan valores que podrían ser NULL.
+El uso de `<=>` (operador NULL-safe) es para  evitar falsos positivos cuando se comparan valores que podrían ser NULL.
 
 #### `tr_audit_viaje_insert`
 
@@ -1048,26 +1039,12 @@ El objetivo es poder comprobar, tanto el comportamiento de la plataforma como el
 
 ### 6.1 Resumen general
 
-La primera parte del dashboard muestra un resumen global de los datos cargados en las tablas principales:
-
-- `usuario`
-- `rider`
-- `conductor`
-- `company`
-- `vehiculo`
-- `viaje`
-- `oferta`
-- `pago`
-- `audit_operacion`
-
-Esta consulta permite comprobar si la base de datos contiene datos en las entidades principales del modelo.
+La primera parte del dashboard muestra un resumen global de los datos cargados en las tablas principales. Esta consulta permite comprobar si la base de datos contiene datos en las entidades principales del modelo.
 
 También se incluyen dos resúmenes por estado:
 
 - viajes por `estado`
 - ofertas por `estado_oferta`
-
-Esto permite ver cuántos viajes están `solicitado`, `aceptado`, `en_curso`, `finalizado` o `cancelado`, y cuántas ofertas están `pendiente`, `aceptada`, `rechazada` o `expirada`.
 
 ### 6.2 Métricas de negocio
 
@@ -1118,21 +1095,18 @@ Se utilizan variables de estado y de configuración mediante `SHOW STATUS` y `SH
 
 ### 6.4 Métricas de InnoDB
 
-El dashboard también revisa métricas específicas de InnoDB, especialmente relacionadas con el buffer pool.
-
-El buffer pool es la memoria que InnoDB utiliza para almacenar en caché datos e índices. Si el buffer pool funciona correctamente, muchas lecturas se resuelven desde memoria y no desde disco.
+El dashboard también revisa métricas específicas de InnoDB, especialmente relacionadas con el buffer pool, que es la memoria que InnoDB utiliza para almacenar en caché datos e índices. Si el buffer pool funciona correctamente, muchas lecturas se resuelven desde memoria y no desde disco.
 
 Se consultan:
 
-- tamaño del buffer pool
-- páginas totales
-- páginas libres
-- páginas sucias
-- lecturas lógicas
-- lecturas físicas
+- Tamaño del buffer pool
+- Páginas totales
+- Páginas libres
+- Páginas sucias
+- Lecturas lógicas
+- Lecturas físicas
 
 Además, se calcula el hit ratio del buffer pool como `(read_requests - reads) / read_requests * 100`.
-
 Esta métrica indica qué porcentaje de lecturas se resuelve desde memoria. Un valor alto es positivo, porque significa que MySQL está evitando muchas lecturas físicas de disco.
 
 La consulta controla también el caso en el que no existan lecturas registradas, evitando una división por cero en entornos recién arrancados.
@@ -1143,10 +1117,10 @@ El dashboard incluye consultas para detectar posibles problemas de concurrencia.
 
 Se revisan:
 
-- esperas por locks de fila
-- tiempo medio de espera por locks
-- deadlocks detectados
-- transacciones activas.
+- Esperas por locks de fila
+- Tiempo medio de espera por locks
+- Deadlocks detectados
+- Transacciones activas.
 
 Para consultar transacciones activas se usa `information_schema.INNODB_TRX`. Esto ayuda a detectar transacciones largas, abiertas o bloqueadas.
 Es especialmente relevante, porque los procedimientos almacenados utilizan transacciones y bloqueos `FOR UPDATE` en operaciones críticas, como la aceptación de ofertas o el cambio de estado de un viaje.
@@ -1157,9 +1131,9 @@ También se consulta `information_schema.tables` para obtener el tamaño ocupado
 
 La consulta muestra:
 
-- nombre de la tabla
-- tamaño de datos en MB
-- tamaño de índices en MB
+- Nombre de la tabla
+- Tamaño de datos en MB
+- Tamaño de índices en MB
 
 Esto permite identificar qué tablas ocupan más espacio y observar el crecimiento de datos e índices dentro del esquema.
 
@@ -1191,7 +1165,7 @@ Se incluyen consultas sobre:
 
 Estas consultas permiten comprobar que los triggers están registrando correctamente las operaciones relevantes sobre viajes, ofertas y pagos.
 
-También permiten revisar la evolución funcional de los viajes, por ejemplo transiciones entre `solicitado`, `aceptado`, `en_curso`, `finalizado` o `cancelado`.
+También permiten revisar la evolución funcional de los viajes, por ejemplo transiciones entre estados.
 
 ## 7. Backup
 
