@@ -1,0 +1,41 @@
+[mysqld]
+
+# STRICT_TRANS_TABLES rechaza datos inválidos.
+# ERROR_FOR_DIVISION_BY_ZERO trata la división por cero como error.
+# NO_ENGINE_SUBSTITUTION evita cambiar automáticamente el motor de almacenamiento.
+sql_mode=STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+
+# Aumenta el detalle del log de errores.
+log_error_verbosity=3
+
+# Activa el log de consultas lentas.
+# Registra consultas de más de 0.5 segundos.
+slow_query_log=1
+long_query_time=0.5
+
+# Memoria usada por InnoDB para datos e índices.
+innodb_buffer_pool_size=256M
+
+# Límite de conexiones simultáneas a la base de datos.
+max_connections=200
+
+# Fuerza escritura del redo log en cada COMMIT de transacción.
+innodb_flush_log_at_trx_commit=1
+
+# Identificador del servidor MySQL.
+server_id=1
+
+# Activa el binary log.
+log_bin=mysql-bin
+
+# Guarda cambios fila a fila en el binlog.
+binlog_format=ROW
+
+# Sincroniza el binlog en cada COMMIT.
+sync_binlog=1
+
+# Conserva los binlogs durante 7 días.
+binlog_expire_logs_seconds=604800
+
+# Activa métricas internas de MySQL.
+performance_schema=1
