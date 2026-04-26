@@ -312,6 +312,123 @@ En PowerShell:
 Get-Content -Raw .\backup_ride_hailing_*.sql | docker exec -i mysql8 mysql -uroot -prootpass
 ```
 
+### 8.3 Recuperación punto en el tiempo con PITR
+
+Si el `binlog` está activo, se puede recuperar la base de datos hasta un momento concreto anterior a un error.
+
+Comprobar primero que el `binlog` está activo:
+
+```sql
+SHOW VARIABLES LIKE 'log_bin';
+SHOW VARIABLES LIKE 'binlog_format';
+SHOW VARIABLES LIKE 'binlog_expire_logs_seconds';
+SHOW BINARY LOGS;
+```
+
+Restaurar el backup completo anterior al error:
+
+```bash
+cat backup_ride_hailing.sql | docker exec -i mysql8 mysql -uroot -prootpass
+```
+
+Extraer del `binlog` los cambios hasta el punto de recuperación deseado:
+
+```bash
+docker exec mysql8 mysqlbinlog \
+  --start-datetime="<fecha_hora_inicio>" \
+  --stop-datetime="<fecha_hora_fin>" \
+  /var/lib/mysql/mysql-bin.000001 > cambios.sql
+```
+
+Aplicar los cambios extraídos:
+
+```bash
+cat cambios.sql | docker exec -i mysql8 mysql -uroot -prootpass
+```
+
+### 8.4 Buscar una operación en el binlog
+
+Para localizar una operación concreta en el `binlog`:
+
+```bash
+docker exec mysql8 mysqlbinlog \
+  --start-datetime="<fecha_hora_inicio>" \
+  --stop-datetime="<fecha_hora_fin>" \
+  /var/lib/mysql/mysql-bin.000001 | grep -A5 -B5 "<operacion>"
+```
+
+También se puede extraer un tramo concreto por posiciones:
+
+```bash
+docker exec mysql8 mysqlbinlog \
+  --start-position=<posicion_inicio> \
+  --stop-position=<posicion_fin> \
+  /var/lib/mysql/mysql-bin.000001 > cambios.sql
+```
+
+### 8.5 Snapshot consistente
+
+Los snapshots pueden ser inconsistentes si MySQL está escribiendo. Para coordinarlos, se puede bloquear brevemente la lectura de tablas.
+
+En MySQL:
+
+```sql
+FLUSH TABLES WITH READ LOCK;
+```
+
+Después se toma el snapshot desde la infraestructura correspondiente.
+
+Al terminar:
+
+```sql
+UNLOCK TABLES;
+```
+
+En esta práctica el método principal sigue siendo `mysqldump`.
+
+### 8.6 Script de backup con rotación
+
+Otra opción es crear un archivo `backup_mysql.sh` para hacer un backup programado:
+
+```bash
+#!/bin/bash
+
+FECHA=$(date +%Y%m%d_%H%M%S)
+BACKUP_DIR="/backups/mysql"
+RETENTION_DAYS=7
+
+mkdir -p "${BACKUP_DIR}"
+
+docker exec mysql8 mysqldump \
+  -ubackup_user -p'<password_backup>' \
+  --databases ride_hailing \
+  --single-transaction \
+  --routines --triggers --events \
+  --set-gtid-purged=OFF \
+  | gzip > "${BACKUP_DIR}/backup_ride_hailing_${FECHA}.sql.gz"
+
+if [ $? -eq 0 ]; then
+  echo "Backup creado correctamente"
+else
+  echo "ERROR: Backup falló" >&2
+  exit 1
+fi
+
+find "${BACKUP_DIR}" -name "backup_ride_hailing_*.sql.gz" -mtime +${RETENTION_DAYS} -delete
+```
+
+Programar backup diario:
+
+```bash
+crontab -e
+```
+
+Añadir:
+
+```bash
+0 3 * * * /scripts/backup_mysql.sh >> /var/log/mysql_backup.log 2>&1
+```
+
 ## 9. Parar o borrar el entorno
 
 ### 9.1 Parar el proyecto sin borrar datos
