@@ -19,7 +19,8 @@ USE ride_hailing;
    --databases ride_hailing \
    --single-transaction \
    --routines --triggers --events \
-   --set-gtid-purged=OFF \> backup_ride_hailing_$(date +%Y%m%d).sql
+   --set-gtid-purged=OFF \
+   > backup_ride_hailing_$(date +%Y%m%d).sql
 */
 
 -- BACKUP COMPLETO DEL SERVIDOR (Incluye todas las bases de datos):
@@ -38,7 +39,7 @@ USE ride_hailing;
 
 /* 
    docker exec mysql8 mysqldump \
-   -ubackup_user -pBackup_Pass_2026! \
+   -ubackup_user -pBackup1234 \
    --single-transaction \
    ride_hailing \
    company \
@@ -143,7 +144,7 @@ SHOW BINARY LOGS;
 */
 
 -- 3. Aplicar cambios
--- cat cambios.sql | docker exec -i mysql8 mysql -uroot -prootpas
+-- cat cambios.sql | docker exec -i mysql8 mysql -uroot -prootpass
 
 -- BUSCAR UNA OPERACIÓN EN EL BINLOG:
 
@@ -193,7 +194,7 @@ SHOW BINARY LOGS;
    mkdir -p "${BACKUP_DIR}"
 
    docker exec mysql8 mysqldump \
-   -ubackup_user -pBackup_Pass_2026! \
+   -ubackup_user -pBackup1234 \
    --databases ride_hailing \
    --single-transaction \
    --routines --triggers --events \

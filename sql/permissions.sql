@@ -6,6 +6,8 @@ USE ride_hailing;
 -- conductores disponibles, viajes, ofertas y pagos básicos.
 -- Las operaciones críticas se realizan mediante procedimientos almacenados, algo que estos usuarios pueden ejecutar.
 
+DROP VIEW IF EXISTS v_app_conductores_disponibles;
+
 CREATE VIEW v_app_conductores_disponibles AS
 SELECT
     c.id_usuario AS id_conductor,
@@ -21,6 +23,8 @@ JOIN company co
     ON co.id_company = c.id_company
 WHERE u.activo = TRUE
   AND c.estado_conductor = 'disponible';
+
+DROP VIEW IF EXISTS v_app_viajes_operativos;
 
 CREATE VIEW v_app_viajes_operativos AS
 SELECT
@@ -38,6 +42,8 @@ SELECT
     distancia_km
 FROM viaje;
 
+DROP VIEW IF EXISTS v_app_ofertas_operativas;
+
 CREATE VIEW v_app_ofertas_operativas AS
 SELECT
     id_oferta,
@@ -48,6 +54,8 @@ SELECT
     estado_oferta,
     importe_ofrecido
 FROM oferta;
+
+DROP VIEW IF EXISTS v_app_pagos_operativos;
 
 CREATE VIEW v_app_pagos_operativos AS
 SELECT
@@ -68,6 +76,8 @@ FROM pago;
 
 -- Se dedican a analizar métricas para detectar problemas a nivel de aplicación y usuario/trabajador.
 
+DROP VIEW IF EXISTS v_analyst_usuarios_anonimizados;
+
 CREATE VIEW v_analyst_usuarios_anonimizados AS
 SELECT
     id_usuario,
@@ -77,6 +87,8 @@ SELECT
     fecha_alta,
     activo
 FROM usuario;
+
+DROP VIEW IF EXISTS v_analyst_viajes_detalle;
 
 CREATE VIEW v_analyst_viajes_detalle AS
 SELECT
@@ -104,6 +116,8 @@ LEFT JOIN usuario u_cond
 LEFT JOIN company co
     ON co.id_company = c.id_company;
 
+DROP VIEW IF EXISTS v_analyst_ofertas_detalle;
+
 CREATE VIEW v_analyst_ofertas_detalle AS
 SELECT
     o.id_oferta,
@@ -124,6 +138,8 @@ JOIN usuario u
 JOIN company co
     ON co.id_company = c.id_company;
 
+DROP VIEW IF EXISTS v_analyst_tasa_aceptacion_conductor;
+
 CREATE VIEW v_analyst_tasa_aceptacion_conductor AS
 SELECT
     o.id_conductor,
@@ -141,6 +157,8 @@ JOIN usuario u
 GROUP BY
     o.id_conductor,
     u.nombre;
+
+DROP VIEW IF EXISTS v_analyst_tasa_aceptacion_company;
 
 CREATE VIEW v_analyst_tasa_aceptacion_company AS
 SELECT
@@ -162,6 +180,8 @@ GROUP BY
     c.id_company,
     co.nombre;
 
+DROP VIEW IF EXISTS v_analyst_ingresos_conductor;
+
 CREATE VIEW v_analyst_ingresos_conductor AS
 SELECT
     v.id_conductor,
@@ -179,10 +199,12 @@ JOIN viaje v
     ON v.id_viaje = p.id_viaje
 JOIN usuario u
     ON u.id_usuario = v.id_conductor
-WHERE p.estado_pago = 'pagado'
+WHERE p.estado_pago = 'completado'
 GROUP BY
     v.id_conductor,
     u.nombre;
+
+DROP VIEW IF EXISTS v_analyst_ingresos_company;
 
 CREATE VIEW v_analyst_ingresos_company AS
 SELECT
@@ -203,10 +225,12 @@ JOIN conductor c
     ON c.id_usuario = v.id_conductor
 JOIN company co
     ON co.id_company = c.id_company
-WHERE p.estado_pago = 'pagado'
+WHERE p.estado_pago = 'completado'
 GROUP BY
     c.id_company,
     co.nombre;
+
+DROP VIEW IF EXISTS v_analyst_pagos_detalle;
 
 CREATE VIEW v_analyst_pagos_detalle AS
 SELECT
@@ -234,6 +258,8 @@ LEFT JOIN usuario u
 LEFT JOIN company co
     ON co.id_company = c.id_company;
 
+DROP VIEW IF EXISTS v_analyst_valoraciones;
+
 CREATE VIEW v_analyst_valoraciones AS
 SELECT
     val.id_valoracion,
@@ -247,6 +273,8 @@ FROM valoracion val
 JOIN usuario u
     ON u.id_usuario = val.id_usuario_valorado;
 
+DROP VIEW IF EXISTS v_analyst_viaje_estado_log;
+
 CREATE VIEW v_analyst_viaje_estado_log AS
 SELECT
     id_historial,
@@ -256,6 +284,8 @@ SELECT
     fecha_cambio,
     comentario
 FROM viaje_estado_log;
+
+DROP VIEW IF EXISTS v_analyst_auditoria_operaciones;
 
 CREATE VIEW v_analyst_auditoria_operaciones AS
 SELECT
@@ -273,12 +303,16 @@ FROM audit_operacion;
 -- Las vistas de este rol están pensadas para consultas básicas, ver las companies activas, conductores sin datos privados, 
 -- vehículos sin datos privados, viajes sin datos económicos detallados y un resúmen de estados de viajes. 
 
+DROP VIEW IF EXISTS v_readonly_companies;
+
 CREATE VIEW v_readonly_companies AS
 SELECT
     id_company,
     nombre,
     activo
 FROM company;
+
+DROP VIEW IF EXISTS v_readonly_conductores;
 
 CREATE VIEW v_readonly_conductores AS
 SELECT
@@ -293,6 +327,8 @@ JOIN usuario u
 JOIN company co
     ON co.id_company = c.id_company;
 
+DROP VIEW IF EXISTS v_readonly_vehiculos;
+
 CREATE VIEW v_readonly_vehiculos AS
 SELECT
     v.id_vehiculo,
@@ -306,6 +342,8 @@ FROM vehiculo v
 JOIN company co
     ON co.id_company = v.id_company;
 
+DROP VIEW IF EXISTS v_readonly_viajes_resumen;
+
 CREATE VIEW v_readonly_viajes_resumen AS
 SELECT
     id_viaje,
@@ -317,6 +355,8 @@ SELECT
     destino_direccion,
     distancia_km
 FROM viaje;
+
+DROP VIEW IF EXISTS v_readonly_viajes_por_estado;
 
 CREATE VIEW v_readonly_viajes_por_estado AS
 SELECT
@@ -372,7 +412,8 @@ GRANT SELECT ON ride_hailing.v_readonly_vehiculos TO 'rol_readonly';
 GRANT SELECT ON ride_hailing.v_readonly_viajes_resumen TO 'rol_readonly';
 GRANT SELECT ON ride_hailing.v_readonly_viajes_por_estado TO 'rol_readonly';
 
--- El rol de backup tiene permisos para exportar datos ya que los necesita para realizar copias de seguridad
+-- El rol de backup tiene permisos para exportar datos ya que los necesita para realizar copias de seguridad.
+-- El backup completo del servidor se recomienda ejecutarlo con root o admin.
 GRANT SELECT, SHOW VIEW, TRIGGER, EVENT, LOCK TABLES
 ON ride_hailing.* TO 'rol_backup';
 

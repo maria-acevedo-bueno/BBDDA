@@ -169,8 +169,7 @@ CREATE TABLE IF NOT EXISTS viaje (
 
 -- La tabla oferta registra las ofertas enviadas a los conductores para un viaje.
 -- Para un mismo viaje se pueden generar varias ofertas, pero solo una termina aceptada.
--- La restricción UNIQUE evita que el mismo conductor reciba dos veces el mismo viaje.
--- La columna generada id_viaje_aceptado refuerza a nivel de BD que solo pueda existir una oferta aceptada por viaje.
+-- La restricción UNIQUE evita que el mismo conductor reciba dos veces una oferta para el mismo viaje.
 CREATE TABLE IF NOT EXISTS oferta (
     id_oferta BIGINT NOT NULL AUTO_INCREMENT,
     id_viaje BIGINT NOT NULL,
@@ -285,7 +284,8 @@ CREATE TABLE IF NOT EXISTS viaje_estado_log (
     INDEX idx_log_viaje_fecha (id_viaje, fecha_cambio)
 ) ENGINE = InnoDB;
 
--- La tabla audit_operacion se usa como log de operaciones críticas sobre viajes, ofertas y pagos (INSERT UPDATE Y DELETE).
+-- La tabla audit_operacion se usa como log de operaciones críticas.
+-- En esta, se registran inserciones de viajes, actualizaciones de viajes, actualizaciones de ofertas e inserciones de pagos mediante triggers.
 CREATE TABLE IF NOT EXISTS audit_operacion (
     id_audit BIGINT NOT NULL AUTO_INCREMENT,
     tabla_afectada VARCHAR(50) NOT NULL,
@@ -448,8 +448,7 @@ DROP PROCEDURE IF EXISTS sp_aceptar_oferta;
 DELIMITER $$
 
 -- sp_aceptar_oferta asigna el viaje al primer conductor que lo acepta.
--- Se hace uso de bloqueo pesimista sobre el viaje para evitar dobles aceptaciones.
--- La tabla oferta incluye una restricción UNIQUE que impide más de una oferta aceptada por viaje incluso si hubiera un error de aplicación.
+-- Se hace uso de bloqueo pesimista sobre el viaje con SELECT ... FOR UPDATE para evitar dobles aceptaciones concurrentes.
 
 CREATE PROCEDURE sp_aceptar_oferta(
     IN p_id_viaje BIGINT,
