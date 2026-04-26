@@ -576,213 +576,59 @@ Las vistas se definen en `permissions.sql`, mientras que los índices principale
 
 Las vistas permiten mostrar solo la información necesaria para cada tipo de usuario. De esta forma, no hace falta conceder acceso directo a todas las tablas base.
 
-En este proyecto las vistas se han organizado según el rol que las utiliza.
-Esto permite separar mejor las responsabilidades de cada usuario y aplicar el principio de mínimos privilegios.
-
 | Vista | Finalidad | Roles con acceso funcional |
 | --- | --- | --- |
-| `v_app_conductores_disponibles` | Muestra conductores activos y disponibles para recibir viajes. | `rol_app` |
-| `v_app_viajes_operativos` | Muestra información operativa de los viajes. | `rol_app` |
-| `v_app_ofertas_operativas` | Muestra información operativa de las ofertas. | `rol_app` |
-| `v_app_pagos_operativos` | Muestra información básica de los pagos. | `rol_app` |
-| `v_analyst_usuarios_anonimizados` | Permite consultar usuarios sin exponer datos sensibles como `email` o `telefono`. | `rol_analista` |
-| `v_analyst_viajes_detalle` | Muestra información detallada de viajes, incluyendo conductor, company y duración. | `rol_analista` |
-| `v_analyst_ofertas_detalle` | Muestra información detallada de las ofertas, incluyendo conductor y company. | `rol_analista` |
-| `v_analyst_tasa_aceptacion_conductor` | Calcula la tasa de aceptación de ofertas por conductor. | `rol_analista` |
-| `v_analyst_tasa_aceptacion_company` | Calcula la tasa de aceptación de ofertas por company. | `rol_analista` |
-| `v_analyst_ingresos_conductor` | Resume ingresos, kilómetros e ingresos por kilómetro de cada conductor. | `rol_analista` |
-| `v_analyst_ingresos_company` | Resume ingresos, comisiones y kilómetros asociados a cada company. | `rol_analista` |
-| `v_analyst_pagos_detalle` | Muestra información económica detallada de los pagos y su relación con viajes, conductores y companies. | `rol_analista` |
-| `v_analyst_valoraciones` | Permite analizar las valoraciones recibidas por los usuarios. | `rol_analista` |
-| `v_analyst_viaje_estado_log` | Muestra el historial de cambios de estado de los viajes. | `rol_analista` |
-| `v_analyst_auditoria_operaciones` | Permite revisar operaciones auditadas sin acceder directamente a la tabla `audit_operacion`. | `rol_analista` |
-| `v_readonly_companies` | Muestra información básica de las companies. | `rol_readonly` |
-| `v_readonly_conductores` | Muestra conductores sin exponer datos privados. | `rol_readonly` |
-| `v_readonly_vehiculos` | Muestra vehículos sin información sensible. | `rol_readonly` |
-| `v_readonly_viajes_resumen` | Muestra un resumen básico de los viajes. | `rol_readonly` |
-| `v_readonly_viajes_por_estado` | Resume cuántos viajes hay en cada estado. | `rol_readonly` |
+| `v_usuarios_anonimizados` | Permite consultar usuarios sin exponer datos sensibles como `email` o `telefono`. | `rol_analista`, `rol_readonly` |
+| `v_pagos_analitica` | Muestra información económica de los pagos para análisis. | `rol_analista`, `rol_readonly` |
+| `v_viaje_estado_log_resumen` | Muestra el historial de cambios de estado de los viajes. | `rol_analista`, `rol_readonly` |
+| `v_auditoria_operaciones` | Permite revisar operaciones auditadas sin acceder directamente a la tabla `audit_operacion`. | `rol_analista`, `rol_readonly` |
+| `v_conductores_disponibles` | Muestra conductores activos y disponibles para recibir viajes. | `rol_app`, `rol_readonly` |
+| `v_viajes_operativos` | Muestra información operativa de los viajes. | `rol_app`, `rol_analista`, `rol_readonly` |
+| `v_ofertas_operativas` | Muestra información operativa de las ofertas. | `rol_app`, `rol_readonly` |
 
-#### `v_app_conductores_disponibles`
+El rol `rol_admin` tiene acceso completo al esquema, por lo que puede consultar todas las vistas y tablas. El rol `rol_backup` también tiene permisos de lectura y `SHOW VIEW`, pero su finalidad no es la consulta funcional, sino permitir copias de seguridad completas.
 
-Esta vista combina las tablas `conductor`, `usuario` y `company`.
-
-Muestra únicamente conductores cuyo usuario está activo y cuyo estado es `disponible`.
-
-Su objetivo es permitir que la aplicación consulte qué conductores pueden recibir nuevas ofertas sin acceder directamente a las tablas base.
-
-Incluye el identificador del conductor, la company a la que pertenece, el nombre del conductor y su estado.
-
-#### `v_app_viajes_operativos`
-
-Esta vista muestra la información principal de los viajes desde un punto de vista operativo.
-
-Incluye el identificador del viaje, rider, conductor, vehículo, estado, fechas principales, direcciones de origen y destino, y distancia.
-
-Sirve para que la aplicación pueda consultar el estado y evolución de los viajes sin necesidad de acceder directamente a la tabla `viaje`.
-
-#### `v_app_ofertas_operativas`
-
-Esta vista muestra la información principal de las ofertas enviadas a conductores.
-
-Incluye el viaje asociado, el conductor, la fecha de envío, la fecha de respuesta, el estado de la oferta y el importe ofrecido.
-
-Permite consultar el ciclo operativo de las ofertas sin exponer toda la tabla base.
-
-#### `v_app_pagos_operativos`
-
-Esta vista muestra información básica de los pagos asociados a los viajes.
-
-Incluye el identificador del pago, el viaje asociado, el importe total, el método de pago, el estado del pago y la fecha de pago.
-
-Está pensada para que la aplicación pueda consultar el estado básico de los pagos sin acceder a todos los detalles económicos de la tabla `pago`.
-
-#### `v_analyst_usuarios_anonimizados`
+#### `v_usuarios_anonimizados`
 
 Esta vista se crea a partir de la tabla `usuario`, pero no incluye los campos `email` ni `telefono`.
 
-Su objetivo es permitir análisis sobre usuarios sin exponer datos personales sensibles.
+Su objetivo es permitir análisis sobre usuarios sin exponer datos personales sensibles. Por eso se concede a roles de consulta, como `rol_analista` y `rol_readonly`.
 
-Por eso se concede al rol `rol_analista`, que necesita información general de usuarios para realizar métricas, pero no necesita acceder a sus datos privados.
+#### `v_pagos_analitica`
 
-#### `v_analyst_viajes_detalle`
+Esta vista muestra los datos principales de la tabla `pago`: importes, comisión, método de pago, estado y fecha.
 
-Esta vista muestra información detallada de los viajes.
+Sirve para obtener métricas económicas sin necesidad de consultar directamente la tabla base. Es útil para informes de ingresos, comisiones y pagos completados.
 
-Combina la tabla `viaje` con `conductor`, `usuario` y `company`, de forma que permite analizar cada viaje junto con el conductor asignado y la company correspondiente.
+#### `v_viaje_estado_log_resumen`
 
-Además, calcula la duración del viaje en minutos mediante `TIMESTAMPDIFF`, usando `fecha_inicio` y `fecha_fin`.
+Esta vista resume el historial de cambios de estado de los viajes.
 
-Es útil para métricas de duración media, kilometraje medio, evolución de viajes y análisis del funcionamiento general del sistema.
+Permite consultar transiciones como `solicitado → aceptado`, `aceptado → en_curso` o `en_curso → finalizado`, sin acceder directamente a la tabla `viaje_estado_log`.
 
-#### `v_analyst_ofertas_detalle`
+#### `v_auditoria_operaciones`
 
-Esta vista muestra información detallada de las ofertas.
+Esta vista muestra la información de auditoría registrada en `audit_operacion`.
 
-Relaciona cada oferta con su conductor y la company a la que pertenece.
+Permite revisar qué operaciones se han realizado, sobre qué tabla, en qué momento y por qué usuario MySQL. Se usa para supervisión y trazabilidad.
 
-Permite analizar qué ofertas se han enviado, a qué conductores, en qué estado se encuentran y qué importe se ofreció.
+#### `v_conductores_disponibles`
 
-Sirve como base para estudiar la aceptación, rechazo o expiración de ofertas.
+Esta vista combina `conductor` y `usuario` para mostrar únicamente conductores activos y con estado `disponible`.
 
-#### `v_analyst_tasa_aceptacion_conductor`
+Es una vista operativa pensada para la aplicación, ya que permite localizar conductores que pueden recibir nuevas ofertas.
 
-Esta vista calcula la tasa de aceptación de ofertas por conductor.
+#### `v_viajes_operativos`
 
-Para cada conductor se obtiene el total de ofertas recibidas, el número de ofertas aceptadas y el porcentaje de aceptación.
+Esta vista muestra la información principal de los viajes: rider, conductor, vehículo, estado, fechas, direcciones y distancia.
 
-La tasa se calcula como `ofertas_aceptadas / total_ofertas * 100`.
+Sirve para consultas funcionales sobre el estado y evolución de los viajes, sin incluir todos los detalles técnicos de la tabla base.
 
-Se usa `NULLIF` para evitar divisiones por cero en caso de que no existan ofertas.
+#### `v_ofertas_operativas`
 
-Esta vista permite comparar el comportamiento de los conductores y detectar conductores con tasas de aceptación bajas o altas.
+Esta vista muestra la información principal de las ofertas enviadas a conductores.
 
-#### `v_analyst_tasa_aceptacion_company`
-
-Esta vista calcula la tasa de aceptación de ofertas agrupada por company.
-
-A diferencia de la vista anterior, no analiza a cada conductor individualmente, sino el comportamiento agregado de todos los conductores de una misma company.
-
-Permite comparar el rendimiento operativo entre companies y detectar diferencias en la aceptación de viajes.
-
-#### `v_analyst_ingresos_conductor`
-
-Esta vista resume los ingresos asociados a cada conductor.
-
-Para cada conductor muestra el número total de pagos, los ingresos totales, el importe correspondiente al conductor, los kilómetros totales y los euros por kilómetro.
-
-Su objetivo es permitir análisis económicos por conductor, relacionando los pagos con la distancia recorrida.
-
-Solo deben considerarse pagos completados, ya que los pagos pendientes, fallidos o reembolsados no representan ingresos efectivos.
-
-#### `v_analyst_ingresos_company`
-
-Esta vista resume los ingresos asociados a cada company.
-
-Relaciona pagos, viajes, conductores y companies para calcular el número total de pagos, los ingresos totales, la comisión obtenida por la company, los kilómetros totales y los euros por kilómetro.
-
-Permite analizar la rentabilidad de cada company dentro de la plataforma.
-
-Igual que en la vista de ingresos por conductor, solo deben considerarse pagos completados.
-
-#### `v_analyst_pagos_detalle`
-
-Esta vista muestra información económica detallada de los pagos.
-
-Combina la tabla `pago` con `viaje`, `conductor`, `usuario` y `company`.
-
-Incluye importes, comisión de la company, importe del conductor, método de pago, estado del pago, distancia del viaje y duración en minutos.
-
-Sirve para análisis económico más completo, ya que relaciona cada pago con el viaje y el conductor correspondiente.
-
-#### `v_analyst_valoraciones`
-
-Esta vista muestra las valoraciones recibidas por los usuarios.
-
-Incluye el viaje asociado, el usuario valorado, su nombre, el rol valorado, la puntuación y la fecha de valoración.
-
-Permite analizar la calidad del servicio, tanto desde el punto de vista de conductores como de riders.
-
-No incluye el comentario de la valoración, ya que para el análisis básico de calidad basta con la puntuación y los datos asociados.
-
-#### `v_analyst_viaje_estado_log`
-
-Esta vista muestra el historial de cambios de estado de los viajes.
-
-Permite consultar transiciones como `solicitado → aceptado`, `aceptado → en_curso` o `en_curso → finalizado`.
-
-Se basa en la tabla `viaje_estado_log`, que se actualiza mediante triggers cuando cambia el estado de un viaje.
-
-Su objetivo es proporcionar trazabilidad funcional del ciclo de vida de los viajes.
-
-#### `v_analyst_auditoria_operaciones`
-
-Esta vista muestra la información registrada en la tabla `audit_operacion`.
-
-Permite revisar qué operaciones se han realizado, sobre qué tabla, sobre qué registro, en qué momento y por qué usuario MySQL.
-
-Se usa para supervisión y trazabilidad general de operaciones relevantes sobre la base de datos.
-
-#### `v_readonly_companies`
-
-Esta vista muestra información básica de las companies.
-
-Incluye el identificador, el nombre y si la company está activa.
-
-Está pensada para consultas generales, sin mostrar información adicional que no sea necesaria para un usuario de solo lectura.
-
-#### `v_readonly_conductores`
-
-Esta vista muestra información básica de los conductores.
-
-Combina `conductor`, `usuario` y `company`, pero no muestra datos privados como `email` o `telefono`.
-
-Incluye el identificador del conductor, nombre, primer apellido, company y estado del conductor.
-
-Sirve para revisar conductores desde un punto de vista informativo, sin permitir modificaciones ni acceso a datos sensibles.
-
-#### `v_readonly_vehiculos`
-
-Esta vista muestra información básica de los vehículos.
-
-Incluye el identificador del vehículo, la company, marca, modelo, color, capacidad y si está activo.
-
-No muestra datos que permitan modificar la asignación de vehículos ni información interna adicional.
-
-#### `v_readonly_viajes_resumen`
-
-Esta vista muestra un resumen básico de los viajes.
-
-Incluye el identificador del viaje, estado, fechas principales, direcciones y distancia.
-
-Está pensada para consultas generales sobre el estado de los viajes, sin incluir información económica ni detalles completos de auditoría.
-
-#### `v_readonly_viajes_por_estado`
-
-Esta vista agrupa los viajes por estado y cuenta cuántos viajes hay en cada uno.
-
-Permite obtener una visión rápida de la situación general de la plataforma, por ejemplo cuántos viajes están `solicitado`, `aceptado`, `en_curso`, `finalizado` o `cancelado`.
-
-Es una vista de resumen, adecuada para usuarios que solo necesitan consultar información general del sistema.
+Permite consultar el estado de cada oferta, el conductor asociado, el viaje correspondiente, la fecha de envío, la fecha de respuesta y el importe ofrecido.
 
 ### 4.2 Índices creados
 
@@ -842,10 +688,9 @@ Además de las claves primarias y únicas, se han creado índices específicos p
 
 ## 5. Procedimientos almacenados y triggers
 
-En esta sección se documenta la lógica programada dentro de la base de datos. El proyecto utiliza procedimientos almacenados para controlar las operaciones críticas del ciclo de vida de un viaje, y triggers para registrar automáticamente cambios relevantes en tablas de auditoría.
+Hay 4 procedimientos que cubren el ciclo de vida completo de un viaje, y triggers que registran automáticamente cambios relevantes en las tablas de auditoría.
 
-La idea principal es evitar que la aplicación haga modificaciones directas e independientes sobre tablas críticas como `viaje`, `oferta` o `pago`. En su lugar, esas operaciones se concentran en procedimientos almacenados que validan condiciones, usan transacciones y controlan errores.
-
+El objetivo es evitar modificaciones directas sobre tablas importantes como `viaje`, `oferta` o `pago`. De modo que, esas operaciones se realizan en procedimientos almacenados que validan condiciones, usan transacciones y controlan errores.
 
 Todos los procedimientos principales utilizan transacciones:
 
@@ -855,46 +700,38 @@ COMMIT;
 ROLLBACK;
 ```
 
-También usan control de errores mediante:
+También usan control de errores con:
 
 ```sql
 DECLARE EXIT HANDLER FOR SQLEXCEPTION
 ```
+Así, si ocurre un error durante la operación, se ejecuta `ROLLBACK` y la base de datos no queda en un estado intermedio.
 
-De esta forma, si ocurre un error durante la operación, se ejecuta `ROLLBACK` y la base de datos no queda en un estado intermedio.
+Todos los procedimientos siguen el mismo patrón: START TRANSACTION → validaciones con FOR UPDATE → operaciones → COMMIT o ROLLBACK con código de resultado en el parámetro OUT p_resultado.
 
 ### 5.1 Procedimientos almacenados
 
 #### `sp_solicitar_viaje`
 
-Este procedimiento se encarga de crear una nueva solicitud de viaje.
+La función de este procedimiento es crear el viaje para luego generar ofertas para todos los conductores disponibles con vehículo activo. Si no hay ninguno, hace rollback.
 
-Recibe los datos del rider, las coordenadas de origen y destino, las direcciones y la distancia estimada. Si todo es válido, inserta un nuevo viaje en estado `solicitado`.
+Primero recibe los datos del rider, las coordenadas de origen y destino, las direcciones y la distancia estimada. Si todo es válido, entoncesinserta un nuevo viaje en estado `solicitado`.
 
-Antes de crear el viaje, comprueba que el rider existe y que el usuario está activo. Esta comprobación se hace bloqueando la fila correspondiente con:
-
+Además, antes de crear el viaje, comprueba que el rider existe y que el usuario está activo, bloqueando la fila correspondiente usando:
 ```sql
 FOR UPDATE
 ```
-
-Esto evita cambios concurrentes sobre ese rider durante la creación del viaje.
-
-Después de insertar el viaje, el procedimiento calcula un importe base para las ofertas:
+Así, se evitan cambios concurrentes sobre ese rider durante la creación del viaje.
+Cuanddo se inserta el viaje, el procedimiento calcula un importe base para las ofertas:
 
 ```sql
 ROUND(p_distancia_km * 1.50, 2)
 ```
+Luego genera ofertas para cada uno de los conductores que esté en estado `disponible`, que tenga una asignación en `conductor_vehiculo`. También, el vehículo asignado debe estár activo, y debe pertenecer a la misma `company` que el conductor.
 
-A continuación, genera ofertas para los conductores que cumplan todas estas condiciones:
+Pero, si no se genera ninguna oferta, entonces se hace `ROLLBACK` y el viaje no se queda creado. Si se genera al menos una oferta, se confirma la operación con `COMMIT`.
 
-- El conductor está en estado `disponible`.
-- Tiene una asignación vigente en `conductor_vehiculo`.
-- El vehículo asignado está activo.
-- El vehículo pertenece a la misma `company` que el conductor.
-
-Si no se genera ninguna oferta, se hace `ROLLBACK` y el viaje no queda creado. Si se genera al menos una oferta, se confirma la operación con `COMMIT`.
-
-Resultado posible:
+Estos serían los resultados posibles:
 
 | Resultado | Significado |
 | --- | --- |
@@ -905,9 +742,8 @@ Resultado posible:
 
 #### `sp_aceptar_oferta`
 
-Este procedimiento permite que un conductor acepte una oferta.
-
-Es uno de los puntos más importantes del sistema, porque debe garantizar que un mismo viaje no pueda ser aceptado por dos conductores distintos.
+Con este procedimiento, se asigna el viaje al conductor que acepta, marca su oferta como aceptada, expira las demás y luego cambia su estado a en_viaje. Se usa bloqueo pesimista (FOR UPDATE).
+Este procedimeinto asegura  que un mismo viaje no se  acepte por dos conductores distintos.
 
 Primero bloquea el viaje con:
 
@@ -917,8 +753,7 @@ FROM viaje
 WHERE id_viaje = p_id_viaje
 FOR UPDATE;
 ```
-
-Este bloqueo hace que, si dos sesiones intentan aceptar el mismo viaje al mismo tiempo, solo una pueda avanzar sobre la fila bloqueada.
+Este bloqueo sirve para que solo una sesión pueda avanzar sobre la fila bloqueada, si dos  intentan aceptar el mismo viaje al mismo tiempo.
 
 Después, el procedimiento comprueba que:
 
@@ -931,7 +766,7 @@ Después, el procedimiento comprueba que:
 - El conductor sigue estando disponible.
 - El conductor y el vehículo pertenecen a la misma `company`.
 
-Si todas las condiciones se cumplen, el procedimiento realiza estos cambios dentro de la misma transacción:
+Si se cumple todo, entonces el procedimiento:
 
 1. Cambia el viaje a estado `aceptado`.
 2. Asigna el conductor al viaje.
@@ -941,9 +776,9 @@ Si todas las condiciones se cumplen, el procedimiento realiza estos cambios dent
 6. Cambia el estado del conductor a `en_viaje`.
 7. Confirma la operación con `COMMIT`.
 
-Además del bloqueo con `FOR UPDATE`, la tabla `oferta` incluye una protección adicional: la columna generada `id_viaje_aceptado` con una restricción `UNIQUE`. Esto impide que existan dos ofertas aceptadas para el mismo viaje.
+Además: la tabla `oferta` tiene la columna `id_viaje_aceptado` con una restricción `UNIQUE`, para que no existan dos ofertas aceptadas para el mismo viaje.
 
-Resultado posible:
+Estos serían los resultados posibles:
 
 | Resultado | Significado |
 | --- | --- |
@@ -956,25 +791,18 @@ Resultado posible:
 
 #### `sp_iniciar_viaje`
 
-Este procedimiento cambia un viaje de estado `aceptado` a estado `en_curso`.
+Con este procedimiento se cambia un viaje de estado `aceptado` a estado `en_curso`, y registra `fecha_inicio`.
 
-Antes de hacer el cambio, bloquea el viaje con `FOR UPDATE` y comprueba que:
-
-- El viaje existe.
-- El viaje está en estado `aceptado`.
-- Tiene conductor asignado.
-- Tiene vehículo asignado.
-
-Si las validaciones son correctas, actualiza la tabla `viaje`:
+Antes de hacer el cambio, bloquea el viaje con `FOR UPDATE` y asegura que el viaje exista y esté con estado `aceptado`. También, que tenga conductor y vehículo asignado.
+Si todo eso se cumple, entonces actualiza la tabla `viaje` con:
 
 ```sql
 estado = 'en_curso'
 fecha_inicio = CURRENT_TIMESTAMP
 ```
+Así se evita  iniciar viajes que todavía no han sido aceptados o que no tienen una asignación completa.
 
-Este procedimiento evita que se puedan iniciar viajes que todavía no han sido aceptados o que no tienen una asignación completa.
-
-Resultado posible:
+Estos serían los resultados posibles:
 
 | Resultado | Significado |
 | --- | --- |
@@ -986,42 +814,27 @@ Resultado posible:
 
 #### `sp_finalizar_viaje_y_pagar`
 
-Este procedimiento cierra el ciclo principal del viaje.
+Se encarga de  cerrar el ciclo principal del viaje, y luego libera al conductor (lo pone en esto `disponible`) y genera el pago aplicando el 20% de comisión.
+Primero bloquea el viaje y comprueba que está en estado `en_curso` y después valida que el método de pago recibido sea uno de los permitidos: `tarjeta_credito`, `efectivo`, `wallet`.
 
-Su función es finalizar un viaje que está en curso, liberar al conductor y crear el pago correspondiente.
-
-Primero bloquea el viaje y comprueba que está en estado `en_curso`. Después valida que el método de pago recibido sea uno de los permitidos:
-
-```sql
-'tarjeta_credito', 'efectivo', 'wallet'
-```
-
-También comprueba que no exista ya un pago para ese viaje. Esta regla se refuerza en la tabla `pago` mediante la restricción:
+También se comprueba que no exista ya un pago para ese viaje. Se hace en la tabla `pago` usando:
 
 ```sql
 UNIQUE (id_viaje)
 ```
+Luego se recupera la oferta aceptada del viaje, porque `importe_ofrecido` se usa como importe del conductor.
 
-Después, el procedimiento recupera la oferta aceptada del viaje, ya que el `importe_ofrecido` se usa como importe del conductor.
+Si todo es correcto:
 
-Si todo es correcto, se ejecutan estos pasos:
+1. Se cambia el viaje a estado `finalizado`.
+2. Se registra `fecha_fin`.
+3. Se cambia el conductor a estado `disponible`.
+4. Se calcula el importe total.
+5. Se calcula la comisión de la compañía.
+6. Se inserta el pago en la tabla `pago`.
+7. Se confirma la transacción.
 
-1. Cambiar el viaje a estado `finalizado`.
-2. Registrar `fecha_fin`.
-3. Cambiar el conductor a estado `disponible`.
-4. Calcular el importe total.
-5. Calcular la comisión de la compañía.
-6. Insertar el pago en la tabla `pago`.
-7. Confirmar la transacción.
-
-El cálculo económico aplicado es:
-
-```sql
-v_importe_total = ROUND(v_importe_ofrecido - 1.20, 2);
-v_comision = ROUND(v_importe_total - v_importe_ofrecido, 2);
-```
-
-Resultado posible:
+Estos serían los resultados posibles:
 
 | Resultado | Significado |
 | --- | --- |
