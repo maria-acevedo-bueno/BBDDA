@@ -270,7 +270,7 @@ En Bash:
 
 ```bash
 docker exec mysql8 mysqldump \
-  -ubackup_user -pBackup_Pass_2026! \
+  -ubackup_user -pBackup1234 \
   --databases ride_hailing \
   --single-transaction \
   --routines --triggers --events \
@@ -282,7 +282,7 @@ En PowerShell:
 
 ```powershell
 docker exec mysql8 mysqldump `
-  -ubackup_user -pBackup_Pass_2026! `
+  -ubackup_user -pBackup1234 `
   --databases ride_hailing `
   --single-transaction `
   --routines --triggers --events `
